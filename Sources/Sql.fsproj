@@ -4,7 +4,7 @@
 		<Copyright>© Cédric Belin</Copyright>
 		<Description>A simple micro-ORM, based on ADO.NET and data annotations.</Description>
 		<Product>SQL Mapper for F#</Product>
-		<Version>5.3.0</Version>
+		<Version>2026.10.0</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -38,7 +38,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="Command/SqlCommand.fs" />
-		<!-- <Compile Include="Mapping/DbColumnInfo.fs" /> -->
+		<!-- <Compile Include="Command/SqlParameterCollection.fs" /> -->
+		<!-- <Compile Include="Command/SqlCommand.fs" /> -->
+		<Compile Include="Mapping/DbColumnInfo.fs" />
 	</ItemGroup>
 </Project>
