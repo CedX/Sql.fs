@@ -1,10 +1,8 @@
 namespace Belin.Sql
 
 open System
-open System.Collections
 open System.Collections.Concurrent
-open System.Data
-open System.Dynamic
+open System.Collections.Generic
 open System.Globalization
 open System.Runtime.CompilerServices
 
@@ -19,19 +17,23 @@ type SqlMapper private () =
 
   /// Converts the specified object into an equivalent value of the specified type.
   /// The `isNullable` argument indicates whether the specified conversion type is nullable.
-  member this.ChangeType(value: objnull, conversionType: Type, isNullable: bool): objnull =
+  member _.ChangeType(value: objnull, conversionType: Type, isNullable: bool): objnull =
     match value with
-    | null | :? DBNull -> this.changeNullValue(conversionType, isNullable)
-    | notNull -> this.changeNotNullValue(notNull, conversionType)
+    | null -> SqlMapper.GetNullEquivalent(conversionType, isNullable)
+    | nullValue when Convert.IsDBNull nullValue -> SqlMapper.GetNullEquivalent(conversionType, isNullable)
+    | nonNullValue -> SqlMapper.GetNonNullEquivalent(nonNullValue, conversionType)
 
-  /// Converts the specified object into an equivalent value of the specified type.
+  /// Converts the specified object into an equivalent value of the specified column type.
   member this.ChangeType(value: objnull, column: DbColumnInfo) =
     this.ChangeType(value, column.PropertyType, column.IsNullable)
 
-  /// TODO conversionType => quand conversionType est une option
-  member private _.changeNotNullValue (value: obj, conversionType: Type): obj =
-    let nullableType = Nullable.GetUnderlyingType conversionType
-    let targetType = nullableType |> defaultIfNull conversionType
+  /// Returns a value indicating whether all values of the specified dictionary are `null`.
+  static member internal IsNullRecord(dictionary: IDictionary<string, objnull>) =
+    dictionary.Values |> Seq.forall isNull
+
+  /// Gets the equivalent value of the specified type corresponding to a given non-`NULL` value.
+  static member private GetNonNullEquivalent(value: obj, conversionType: Type): obj =
+    let targetType = Nullable.GetUnderlyingType conversionType |> defaultIfNull conversionType
 
     if targetType.IsEnum then
       match value with
@@ -40,8 +42,8 @@ type SqlMapper private () =
     elif targetType.IsInstanceOfType value then value
     else Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture) |> nonNull
 
-  /// TODO conversionType => quand conversionType est une option
-  member private _.changeNullValue (conversionType: Type, isNullable: bool): objnull =
+  /// Gets the equivalent value of the specified type corresponding to a `NULL` value.
+  static member private GetNullEquivalent(conversionType: Type, isNullable: bool): objnull =
     let nullableType = Nullable.GetUnderlyingType conversionType
     let targetType = nullableType |> defaultIfNull conversionType
 

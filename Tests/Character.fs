@@ -36,3 +36,5 @@ type Character() =
   /// The last name.
   [<Column "lastName">]
   member val LastName = "" with get, set
+
+// TODO la classe Character sous forme de record !

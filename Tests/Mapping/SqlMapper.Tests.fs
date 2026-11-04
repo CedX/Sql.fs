@@ -2,7 +2,7 @@ namespace Belin.Sql
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System
-open System.Data
+open System.Collections.Generic
 
 /// Tests the features of the `SqlMapper` class.
 [<TestClass>]
@@ -86,14 +86,16 @@ type SqlMapperTests() =
     [| -123.456; typeof<string>; true; "-123.456" |]
     [| "123"; typeof<string>; false; "123" |]
     [| "-123.456"; typeof<string>; true; "-123.456" |]
-  ] // TODO ajouter des tests pour les options!!!!
+
+    // TODO ajouter des tests pour les options!!!!
+  ]
 
   [<TestMethod; DynamicData "ChangeTypeData">]
   member _.ChangeType(value: objnull, conversionType: Type, isNullable: bool, expected: objnull) =
     SqlMapper.Instance.ChangeType(value, conversionType, isNullable) |> Should.be expected
 
   // [<TestMethod>]
-  // member _.CreateInstance() {
+  // member _.CreateInstance() =
   //   var properties = new Dictionary<string, object?> {
   //     ["CLASS"] = "Bard/minstrel",
   //     ["firstName"] = "Cédric",
@@ -123,10 +125,9 @@ type SqlMapperTests() =
   //   Assert.AreEqual("Cédric", character.FirstName);
   //   Assert.AreEqual(CharacterGender.Balrog, character.Gender);
   //   Assert.AreEqual("", character.LastName);
-  // }
 
   // [<TestMethod>]
-  // member _.GetTable() {
+  // member _.GetTable() =
   //   var table = SqlMapper.Instance.GetTable<Character>();
   //   Assert.AreEqual("Characters", table.Name);
   //   Assert.AreEqual("main", table.Schema);
@@ -140,20 +141,18 @@ type SqlMapperTests() =
   //   table.Columns["firstName"].CanWrite |> Should.beTrue
   //   table.Columns["fullName"].IsComputed |> Should.beTrue
   //   table.Columns["ID"].IsIdentity |> Should.beTrue
-  // }
+
+  [<TestMethod>]
+  member _.IsNullRecord() =
+    // It should return `true` if all values of the specified dictionary are `null`.
+    Dictionary<string, objnull>() |> SqlMapper.IsNullRecord |> Should.beTrue
+    dict ["Foo", null; "Bar", null] |> SqlMapper.IsNullRecord |> Should.beTrue
+
+    // It should return `false` if at least one value of the specified dictionary is not `null`.
+    dict ["Foo", "Bar" :> objnull; "Baz", null] |> SqlMapper.IsNullRecord |> Should.beFalse
 
   // [<TestMethod>]
-  // member _.IsNullObject() {
-  //   // It should return `true` if all values of the specified dictionary are `null`.
-  //   SqlMapper.IsNullObject([]) |> Should.beTrue
-  //   SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = null, ["Bar"] = null }) |> Should.beTrue
-
-  //   // It should return `false` if at least one value of the specified dictionary is not `null`.
-  //   SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = "Bar", ["Baz"] = null }) |> Should.beFalse
-  // }
-
-  // [<TestMethod>]
-  // member _.SplitOn() {
+  // member _.SplitOn() =
   //   let record = new List<KeyValuePair<string, object?>> {
   //     new("Id", 123),
   //     new("LongLabel", "Hello World!"),

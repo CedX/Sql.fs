@@ -25,7 +25,7 @@ type DbTableInfoTests() =
 
   [<TestMethod>]
   member _.Name() =
-    // It should return the class name when there is no [Table] attribute.
+    // It should return the type name when there is no [Table] attribute.
     DbTableInfo(typeof<ConsoleKeyInfo>).Name |> Should.be typeof<ConsoleKeyInfo>.Name
 
     // It should return the value of the [Table] attribute when it is present.
@@ -33,8 +33,8 @@ type DbTableInfoTests() =
 
   [<TestMethod>]
   member _.Schema() =
-    // It should return `null` when there is no [Table] attribute.
+    // It should return `None` when there is no [Table] attribute.
     DbTableInfo(typeof<ConsoleKeyInfo>).Schema |> Should.beNone
 
-    // It should return the value of the [Table] attribute when it is present.
+    // It should return the value of the [Table] schema when it is present.
     DbTableInfo(typeof<Character>).Schema |> Should.beSomeValue "main"
