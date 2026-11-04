@@ -38,8 +38,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="Mapping/DbColumnInfo.fs" />
-		<Compile Include="Mapping/DbTableInfo.fs" />
-		<Compile Include="Mapping/SqlMapper.fs" />
+		<Compile Include="Mapping/ColumnInfo.fs" />
+		<Compile Include="Mapping/TableInfo.fs" />
+		<Compile Include="Mapping/Mapper.fs" />
 	</ItemGroup>
 </Project>

@@ -4,9 +4,9 @@ open Microsoft.VisualStudio.TestTools.UnitTesting
 open System
 open System.Collections.Generic
 
-/// Tests the features of the `SqlMapper` class.
+/// Tests the features of the `Mapper` class.
 [<TestClass>]
-type SqlMapperTests() =
+type MapperTests() =
 
   /// The test data used by the `ChangeType` method.
   static member val private ChangeTypeData: objnull array list = [
@@ -92,7 +92,7 @@ type SqlMapperTests() =
 
   [<TestMethod; DynamicData "ChangeTypeData">]
   member _.ChangeType(value: objnull, conversionType: Type, isNullable: bool, expected: objnull) =
-    SqlMapper.Instance.ChangeType(value, conversionType, isNullable) |> Should.be expected
+    Mapper.Instance.ChangeType(value, conversionType, isNullable) |> Should.be expected
 
   // [<TestMethod>]
   // member _.CreateInstance() =
@@ -104,7 +104,7 @@ type SqlMapperTests() =
   //   }
 
   //   // It should create an `ExpandoObject` by default.
-  //   dynamic expandoObject = SqlMapper.Instance.CreateInstance(properties)
+  //   dynamic expandoObject = Mapper.Instance.CreateInstance(properties)
   //   Assert.IsInstanceOfType<ExpandoObject>(expandoObject)
   //   Assert.AreEqual("Bard/minstrel", expandoObject.CLASS)
   //   Assert.AreEqual("Cédric", expandoObject.firstName)
@@ -112,7 +112,7 @@ type SqlMapperTests() =
   //   expandoObject.lastName |> Should.beNull
 
   //   // It should create an object of the specified type.
-  //   let character = SqlMapper.Instance.CreateInstance<Character>(properties)
+  //   let character = Mapper.Instance.CreateInstance<Character>(properties)
   //   Assert.IsInstanceOfType<Character>(character)
   //   Assert.AreEqual("Cédric", character.FirstName)
   //   Assert.AreEqual(CharacterGender.Balrog, character.Gender)
@@ -120,7 +120,7 @@ type SqlMapperTests() =
 
   [<TestMethod>]
   member _.GetTable() =
-    let table = SqlMapper.Instance.GetTable<Character>()
+    let table = Mapper.Instance.GetTable<Character>()
     table.Name |> Should.be "Characters"
     table.Schema |> Should.beSomeValue "main"
     table.Type |> Should.be typeof<Character>
@@ -137,11 +137,11 @@ type SqlMapperTests() =
   [<TestMethod>]
   member _.IsNullRecord() =
     // It should return `true` if all values of the specified dictionary are `null`.
-    Dictionary<string, objnull>() |> SqlMapper.IsNullRecord |> Should.beTrue
-    dict ["Foo", null; "Bar", null] |> SqlMapper.IsNullRecord |> Should.beTrue
+    Dictionary<string, objnull>() |> Mapper.IsNullRecord |> Should.beTrue
+    dict ["Foo", null; "Bar", null] |> Mapper.IsNullRecord |> Should.beTrue
 
     // It should return `false` if at least one value of the specified dictionary is not `null`.
-    dict ["Foo", "Bar" :> objnull; "Baz", null] |> SqlMapper.IsNullRecord |> Should.beFalse
+    dict ["Foo", "Bar" :> objnull; "Baz", null] |> Mapper.IsNullRecord |> Should.beFalse
 
   [<TestMethod>]
   member _.SplitOn() =
@@ -165,22 +165,22 @@ type SqlMapperTests() =
     ]
 
     // It should return a dictionary equivalent to the specified data row.
-    let mutable records = SqlMapper.SplitOn record
+    let mutable records = Mapper.SplitOn record
     records.Count |> Should.be 1
     records[0] |> Should.beSequence properties
 
     // It should not split the data row if the specified field does not exist.
-    records <- SqlMapper.SplitOn(record, "_NonExistent_")
+    records <- Mapper.SplitOn(record, "_NonExistent_")
     records.Count |> Should.be 1
     records[0] |> Should.beSequence properties
 
     // It should split the data row according to the specified fields.
-    records <- SqlMapper.SplitOn(record, "id")
+    records <- Mapper.SplitOn(record, "id")
     records.Count |> Should.be 2
     records[0] |> Should.beSequence (dict ["Id", 123; "LongLabel", "Hello World!"; "ShortLabel", null])
     records[1] |> Should.beSequence (dict ["Id", 456; "FirstName", "Cédric"; "LastName", "Belin"; "RowID", 789])
 
-    records <- SqlMapper.SplitOn(record, "id", "rowid", "_Unused_")
+    records <- Mapper.SplitOn(record, "id", "rowid", "_Unused_")
     records.Count |> Should.be 3
     records[0] |> Should.beSequence (dict ["Id", 123; "LongLabel", "Hello World!"; "ShortLabel", null])
     records[1] |> Should.beSequence (dict ["Id", 456; "FirstName", "Cédric"; "LastName", "Belin"])

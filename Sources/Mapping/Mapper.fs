@@ -8,24 +8,24 @@ open System.Globalization
 open System.Runtime.CompilerServices
 
 /// Maps data records to entity objects.
-type SqlMapper private () =
+type Mapper private () =
 
   /// The mapping between the entity types and their associated database tables.
-  static let mapping = ConcurrentDictionary<Type, DbTableInfo>()
+  static let mapping = ConcurrentDictionary<Type, TableInfo>()
 
   /// The singleton instance of the data mapper.
-  static member val Instance = SqlMapper()
+  static member val Instance = Mapper()
 
   /// Converts the specified object into an equivalent value of the specified type.
   /// The `isNullable` argument indicates whether the specified conversion type is nullable.
   member _.ChangeType(value: objnull, conversionType: Type, ?isNullable: bool): objnull =
     match value with
-    | null -> SqlMapper.GetNullEquivalent(conversionType, defaultArg isNullable false)
-    | nullValue when Convert.IsDBNull nullValue -> SqlMapper.GetNullEquivalent(conversionType, defaultArg isNullable false)
-    | nonNullValue -> SqlMapper.GetNonNullEquivalent(nonNullValue, conversionType)
+    | null -> Mapper.GetNullEquivalent(conversionType, defaultArg isNullable false)
+    | nullValue when Convert.IsDBNull nullValue -> Mapper.GetNullEquivalent(conversionType, defaultArg isNullable false)
+    | nonNullValue -> Mapper.GetNonNullEquivalent(nonNullValue, conversionType)
 
   /// Converts the specified object into an equivalent value of the specified column type.
-  member this.ChangeType(value: objnull, column: DbColumnInfo) =
+  member this.ChangeType(value: objnull, column: ColumnInfo) =
     this.ChangeType(value, column.PropertyType, column.IsNullable)
 
   /// Creates a new object of a given type from the specified dictionary.
@@ -33,7 +33,7 @@ type SqlMapper private () =
   //   ()
 
   /// Gets the table information associated with the specified type.
-  member _.GetTable(entityType: Type) = mapping.GetOrAdd(entityType, fun entityType -> DbTableInfo entityType)
+  member _.GetTable(entityType: Type) = mapping.GetOrAdd(entityType, fun entityType -> TableInfo entityType)
 
   /// Gets the table information associated with the specified type.
   member this.GetTable<'T when 'T: (new: unit -> 'T)>() = this.GetTable typeof<'T>
@@ -71,7 +71,7 @@ type SqlMapper private () =
     for index = 0 to record.FieldCount - 1 do
       let value = record[index]
       properties.Add (record.GetName index, if Convert.IsDBNull value then null else value)
-    SqlMapper.SplitOn(properties, fields)
+    Mapper.SplitOn(properties, fields)
 
   /// Gets the equivalent value of the specified type corresponding to a given non-`NULL` value.
   static member private GetNonNullEquivalent(value: obj, conversionType: Type): obj =

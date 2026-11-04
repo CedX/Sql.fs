@@ -7,7 +7,7 @@ open System.Reflection
 open System.Threading
 
 /// Provides information about a database column.
-type DbColumnInfo(property: PropertyInfo) =
+type ColumnInfo(property: PropertyInfo) =
 
   /// The nullability context.
   static let nullabilityContext = new ThreadLocal<NullabilityInfoContext>(fun () -> NullabilityInfoContext())
