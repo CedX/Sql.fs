@@ -27,6 +27,12 @@ type SqlMapper private () =
   member this.ChangeType(value: objnull, column: DbColumnInfo) =
     this.ChangeType(value, column.PropertyType, column.IsNullable)
 
+  /// Gets the table information associated with the specified type.
+  member this.GetTable<'T when 'T: (new: unit -> 'T)>() = this.GetTable typeof<'T>
+
+  /// Gets the table information associated with the specified type.
+  member _.GetTable(entityType: Type) = mapping.GetOrAdd(entityType, fun entityType -> DbTableInfo entityType)
+
   /// Returns a value indicating whether all values of the specified dictionary are `null`.
   static member internal IsNullRecord(dictionary: IDictionary<string, objnull>) =
     dictionary.Values |> Seq.forall isNull
