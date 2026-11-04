@@ -96,7 +96,7 @@ type SqlMapperTests() =
 
   // [<TestMethod>]
   // member _.CreateInstance() =
-  //   var properties = new Dictionary<string, object?> {
+  //   let properties = Dictionary<string, objnull> {
   //     ["CLASS"] = "Bard/minstrel",
   //     ["firstName"] = "Cédric",
   //     ["gender"] = nameof(CharacterGender.Balrog),
@@ -111,16 +111,8 @@ type SqlMapperTests() =
   //   Assert.AreEqual(nameof(CharacterGender.Balrog), expandoObject.gender)
   //   expandoObject.lastName |> Should.beNull
 
-  //   // It should support creating an object of type `PSObject`.
-  //   dynamic psObject = SqlMapper.Instance.CreateInstance<PSObject>(properties)
-  //   Assert.IsInstanceOfType<PSObject>(psObject)
-  //   Assert.AreEqual("Bard/minstrel", psObject.CLASS)
-  //   Assert.AreEqual("Cédric", psObject.firstName)
-  //   Assert.AreEqual(nameof(CharacterGender.Balrog), psObject.gender)
-  //   psObject.lastName |> Should.beNull
-
   //   // It should create an object of the specified type.
-  //   var character = SqlMapper.Instance.CreateInstance<Character>(properties)
+  //   let character = SqlMapper.Instance.CreateInstance<Character>(properties)
   //   Assert.IsInstanceOfType<Character>(character)
   //   Assert.AreEqual("Cédric", character.FirstName)
   //   Assert.AreEqual(CharacterGender.Balrog, character.Gender)
@@ -151,45 +143,45 @@ type SqlMapperTests() =
     // It should return `false` if at least one value of the specified dictionary is not `null`.
     dict ["Foo", "Bar" :> objnull; "Baz", null] |> SqlMapper.IsNullRecord |> Should.beFalse
 
-  // [<TestMethod>]
-  // member _.SplitOn() =
-  //   let record = new List<KeyValuePair<string, object?>> {
-  //     new("Id", 123),
-  //     new("LongLabel", "Hello World!"),
-  //     new("ShortLabel", null),
-  //     new("Id", 456),
-  //     new("FirstName", "Cédric"),
-  //     new("LastName", "Belin"),
-  //     new("RowID", 789)
-  //   }
+  [<TestMethod>]
+  member _.SplitOn() =
+    let record = ResizeArray<string * objnull> [
+      "Id", 123 :> objnull
+      "LongLabel", "Hello World!"
+      "ShortLabel", null
+      "Id", 456
+      "FirstName", "Cédric"
+      "LastName", "Belin"
+      "RowID", 789
+    ]
 
-  //   var properties = new Dictionary<string, object?> {
-  //     ["Id"] = 123,
-  //     ["LongLabel"] = "Hello World!",
-  //     ["ShortLabel"] = null,
-  //     ["FirstName"] = "Cédric",
-  //     ["LastName"] = "Belin",
-  //     ["RowID"] = 789
-  //   }
+    let properties = dict [
+      "Id", 123 :> objnull
+      "LongLabel", "Hello World!"
+      "ShortLabel", null
+      "FirstName", "Cédric"
+      "LastName", "Belin"
+      "RowID", 789
+    ]
 
-  //   // It should return a dictionary equivalent to the specified data row.
-  //   let records = SqlMapper.SplitOn(record)
-  //   Assert.HasCount(1, records)
-  //   Assert.AreSequenceEqual(properties, records[0])
+    // It should return a dictionary equivalent to the specified data row.
+    let mutable records = SqlMapper.SplitOn record
+    records.Count |> Should.be 1
+    records[0] |> Should.beSequence properties
 
-  //   // It should not split the data row if the specified field does not exist.
-  //   records = SqlMapper.SplitOn(record, "_NonExistent_")
-  //   Assert.HasCount(1, records)
-  //   Assert.AreSequenceEqual(properties, records[0])
+    // It should not split the data row if the specified field does not exist.
+    records <- SqlMapper.SplitOn(record, "_NonExistent_")
+    records.Count |> Should.be 1
+    records[0] |> Should.beSequence properties
 
-  //   // It should split the data row according to the specified fields.
-  //   records = SqlMapper.SplitOn(record, "id")
-  //   Assert.HasCount(2, records)
-  //   Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0])
-  //   Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin", ["RowID"] = 789 }, records[1])
+    // It should split the data row according to the specified fields.
+    records <- SqlMapper.SplitOn(record, "id")
+    records.Count |> Should.be 2
+    records[0] |> Should.beSequence (dict ["Id", 123; "LongLabel", "Hello World!"; "ShortLabel", null])
+    records[1] |> Should.beSequence (dict ["Id", 456; "FirstName", "Cédric"; "LastName", "Belin"; "RowID", 789])
 
-  //   records = SqlMapper.SplitOn(record, "id", "rowid", "_Unused_")
-  //   Assert.HasCount(3, records)
-  //   Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0])
-  //   Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin" }, records[1])
-  //   Assert.AreSequenceEqual(new Dictionary<string, object?> { ["RowID"] = 789 }, records[2])
+    records <- SqlMapper.SplitOn(record, "id", "rowid", "_Unused_")
+    records.Count |> Should.be 3
+    records[0] |> Should.beSequence (dict ["Id", 123; "LongLabel", "Hello World!"; "ShortLabel", null])
+    records[1] |> Should.beSequence (dict ["Id", 456; "FirstName", "Cédric"; "LastName", "Belin"])
+    records[2] |> Should.beSequence (dict [("RowID", 789)])
