@@ -41,5 +41,6 @@
 		<!-- <Compile Include="Command/SqlParameterCollection.fs" /> -->
 		<!-- <Compile Include="Command/SqlCommand.fs" /> -->
 		<Compile Include="Mapping/DbColumnInfo.fs" />
+		<Compile Include="Mapping/DbTableInfo.fs" />
 	</ItemGroup>
 </Project>

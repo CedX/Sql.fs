@@ -20,6 +20,7 @@ type DbColumnInfo(property: PropertyInfo) =
     typeof<Nullable<byte>>, DbType.Byte
     typeof<byte option>, DbType.Byte
     typeof<byte>, DbType.Byte
+    typeof<byte[] option>, DbType.Binary
     typeof<byte[]>, DbType.Binary
     typeof<Nullable<char>>, DbType.StringFixedLength
     typeof<char option>, DbType.StringFixedLength
@@ -57,6 +58,7 @@ type DbColumnInfo(property: PropertyInfo) =
     typeof<Nullable<int16>>, DbType.Int16
     typeof<int16 option>, DbType.Int16
     typeof<int16>, DbType.Int16
+    typeof<string option>, DbType.String
     typeof<string>, DbType.String
     typeof<Nullable<TimeOnly>>, DbType.Time
     typeof<TimeOnly option>, DbType.Time

@@ -18,7 +18,7 @@ type CharacterGender =
 type Character() =
 
   /// The first name.
-  [<Column("firstName")>]
+  [<Column "firstName">]
   member val FirstName = "" with get, set
 
   /// The full name.
@@ -27,12 +27,12 @@ type Character() =
 
   /// The character's gender.
   [<Column("gender", TypeName = nameof(DbType.AnsiString))>]
-  member val Gender = CharacterGender.Human
+  member val Gender = CharacterGender.Human with get, set
 
   /// The character's identifier.
   [<Column("ID"); DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
   member val Id = 1 with get, set
 
   /// The last name.
-  [<Column("lastName")>]
+  [<Column "lastName">]
   member val LastName = "" with get, set
