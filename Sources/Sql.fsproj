@@ -38,9 +38,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- <Compile Include="Command/SqlParameterCollection.fs" /> -->
-		<!-- <Compile Include="Command/SqlCommand.fs" /> -->
 		<Compile Include="Mapping/DbColumnInfo.fs" />
 		<Compile Include="Mapping/DbTableInfo.fs" />
+		<Compile Include="Mapping/SqlMapper.fs" />
 	</ItemGroup>
 </Project>

@@ -20,8 +20,8 @@ type DbColumnInfo(property: PropertyInfo) =
     typeof<Nullable<byte>>, DbType.Byte
     typeof<byte option>, DbType.Byte
     typeof<byte>, DbType.Byte
-    typeof<byte[] option>, DbType.Binary
-    typeof<byte[]>, DbType.Binary
+    typeof<byte array option>, DbType.Binary
+    typeof<byte array>, DbType.Binary
     typeof<Nullable<char>>, DbType.StringFixedLength
     typeof<char option>, DbType.StringFixedLength
     typeof<char>, DbType.StringFixedLength
