@@ -14,7 +14,7 @@ type ColumnInfoTests() =
   [<DataRow "Gender">]
   [<DataRow "Id">]
   member _.CanRead(name: string) =
-    ColumnInfo(nonNull (typeof<Character>.GetProperty name)).CanRead |> Should.beTrue
+    Should.beTrue (ColumnInfo(nonNull (typeof<Character>.GetProperty name)).CanRead)
 
   [<TestMethod>]
   [<DataRow "FirstName">]
@@ -22,7 +22,7 @@ type ColumnInfoTests() =
   [<DataRow "Gender">]
   [<DataRow "Id">]
   member _.CanWrite(name: string) =
-    ColumnInfo(nonNull (typeof<Character>.GetProperty name)).CanWrite |> Should.beTrue
+    Should.beTrue (ColumnInfo(nonNull (typeof<Character>.GetProperty name)).CanWrite)
 
   [<TestMethod>]
   [<DataRow("FirstName", DbType.String)>]

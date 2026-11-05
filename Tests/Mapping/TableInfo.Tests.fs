@@ -9,7 +9,7 @@ type TableInfoTests() =
 
   [<TestMethod>]
   member _.Columns() =
-    TableInfo(typeof<ConsoleKeyInfo>).Columns |> Should.beEmpty
+    Should.beEmpty (TableInfo(typeof<ConsoleKeyInfo>).Columns)
 
     let columns = TableInfo(typeof<Character>).Columns
     columns.Count |> Should.be 5
@@ -17,10 +17,10 @@ type TableInfoTests() =
 
   [<TestMethod>]
   member _.IdentityColumn() =
-    TableInfo(typeof<ConsoleKeyInfo>).IdentityColumn |> Should.beNone
+    Should.beNone (TableInfo(typeof<ConsoleKeyInfo>).IdentityColumn)
 
     let identityColumn = TableInfo(typeof<Character>).IdentityColumn
-    identityColumn |> Should.beSome
+    Should.beSome identityColumn
     identityColumn |> Option.get |> _.Name |> Should.be "ID"
 
   [<TestMethod>]
@@ -34,7 +34,7 @@ type TableInfoTests() =
   [<TestMethod>]
   member _.Schema() =
     // It should return `None` when there is no [Table] attribute.
-    TableInfo(typeof<ConsoleKeyInfo>).Schema |> Should.beNone
+    Should.beNone (TableInfo(typeof<ConsoleKeyInfo>).Schema)
 
     // It should return the value of the [Table] schema when it is present.
     TableInfo(typeof<Character>).Schema |> Should.beSomeValue "main"

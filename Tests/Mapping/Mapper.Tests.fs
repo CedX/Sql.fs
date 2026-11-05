@@ -128,9 +128,9 @@ type MapperTests() =
     table.Columns["gender"].PropertyType |> Should.be typeof<CharacterGender>
     table.Columns["lastName"].PropertyType |> Should.be typeof<string>
 
-    table.Columns["firstName"].CanWrite |> Should.beTrue
-    table.Columns["fullName"].IsComputed |> Should.beTrue
-    table.Columns["ID"].IsIdentity |> Should.beTrue
+    Should.beTrue (table.Columns["firstName"].CanWrite)
+    Should.beTrue (table.Columns["fullName"].IsComputed)
+    Should.beTrue (table.Columns["ID"].IsIdentity)
 
   [<TestMethod>]
   member _.IsNullRecord() =

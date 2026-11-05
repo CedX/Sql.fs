@@ -1,4 +1,5 @@
 namespace Belin.Sql
+// fsharplint:disable MaxCharactersOnLine
 
 open System
 open System.Collections.Concurrent
@@ -30,7 +31,7 @@ type Mapper private () =
 
   /// Gets the table information associated with the specified type.
   member _.GetTable(entityType: Type) =
-    mapping.GetOrAdd(entityType, fun entityType -> TableInfo entityType)
+    mapping.GetOrAdd(entityType, TableInfo)
 
   /// Gets the table information associated with the specified type.
   member this.GetTable<'T>() =
@@ -43,7 +44,7 @@ type Mapper private () =
     else
       let instance = nonNull (Activator.CreateInstance entityType)
       let table = this.GetTable entityType
-      for name in record.Keys |> Seq.filter (fun key -> table.Columns.ContainsKey key) do
+      for name in record.Keys |> Seq.filter table.Columns.ContainsKey do
         let column = table.Columns[name]
         if column.CanWrite then column.SetValue(instance, this.ChangeType(record[name], column))
       instance
@@ -87,9 +88,9 @@ type Mapper private () =
     | 2 -> objects[0], objects[1]
     | 3 -> objects[0], objects[1], objects[2]
     | 4 -> objects[0], objects[1], objects[2], objects[3]
-    | 5 -> objects[0], objects[1], objects[2], objects[3], objects[4]
-    | 6 -> objects[0], objects[1], objects[2], objects[3], objects[4], objects[5]
-    | _ -> objects[0], objects[1], objects[2], objects[3], objects[4], objects[5], objects[6]
+    | 5 -> objects[0], objects[1], objects[2], objects[3], objects[4] // fsharplint:disable-line MaxNumberOfItemsInTuple
+    | 6 -> objects[0], objects[1], objects[2], objects[3], objects[4], objects[5] // fsharplint:disable-line MaxNumberOfItemsInTuple
+    | _ -> objects[0], objects[1], objects[2], objects[3], objects[4], objects[5], objects[6] // fsharplint:disable-line MaxNumberOfItemsInTuple
 
   /// Creates a new object pair of the given types from the specified data record.
   member this.CreateInstance<'TItem1, 'TItem2>(record: IDataRecord, ?splitOn: string): 'TItem1 * 'TItem2 =
@@ -173,7 +174,7 @@ type Mapper private () =
       let records = ResizeArray<Dictionary<string, objnull>>(fields.Length + 1)
       let mutable splitOn = fieldQueue.Dequeue()
 
-      for index, (key, value) in record |> Seq.indexed do
+      for index, (key, value) in Seq.indexed record do
         if index > 0 && key.Equals(splitOn, StringComparison.OrdinalIgnoreCase) then
           records.Add properties
           properties <- Dictionary<string, objnull>(record.Count - index)
