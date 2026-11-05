@@ -94,29 +94,29 @@ type MapperTests() =
   member _.ChangeType(value: objnull, conversionType: Type, isNullable: bool, expected: objnull) =
     Mapper.Instance.ChangeType(value, conversionType, isNullable) |> Should.be expected
 
-  // [<TestMethod>]
-  // member _.CreateInstance() =
-  //   let properties = Dictionary<string, objnull> {
-  //     ["CLASS"] = "Bard/minstrel",
-  //     ["firstName"] = "Cédric",
-  //     ["gender"] = nameof(CharacterGender.Balrog),
-  //     ["lastName"] = null
-  //   }
+  [<TestMethod>]
+  member _.CreateInstance() =
+    let properties = dict [
+      "CLASS", "Bard/minstrel" :> objnull
+      "firstName", "Cédric"
+      "gender", nameof CharacterGender.Balrog
+      "lastName", null
+    ]
 
-  //   // It should create an `ExpandoObject` by default.
-  //   dynamic expandoObject = Mapper.Instance.CreateInstance(properties)
-  //   Assert.IsInstanceOfType<ExpandoObject>(expandoObject)
-  //   Assert.AreEqual("Bard/minstrel", expandoObject.CLASS)
-  //   Assert.AreEqual("Cédric", expandoObject.firstName)
-  //   Assert.AreEqual(nameof(CharacterGender.Balrog), expandoObject.gender)
-  //   expandoObject.lastName |> Should.beNull
+    // It should create an `ExpandoObject` by default.
+    let map = Mapper.Instance.CreateInstance properties
+    map |> Should.beOfType typeof<Map<string, objnull>>
+    map["CLASS"] |> Should.be "Bard/minstrel"
+    map["firstName"] |> Should.be "Cédric"
+    map["gender"] |> Should.be (nameof CharacterGender.Balrog)
+    map["lastName"] |> Should.beNull
 
-  //   // It should create an object of the specified type.
-  //   let character = Mapper.Instance.CreateInstance<Character>(properties)
-  //   Assert.IsInstanceOfType<Character>(character)
-  //   Assert.AreEqual("Cédric", character.FirstName)
-  //   Assert.AreEqual(CharacterGender.Balrog, character.Gender)
-  //   Assert.AreEqual("", character.LastName)
+    // It should create an object of the specified type.
+    let character = Mapper.Instance.CreateInstance<Character> properties
+    character |> Should.beOfType typeof<Character>
+    character.FirstName |> Should.be "Cédric"
+    character.Gender |> Should.be CharacterGender.Balrog
+    character.LastName |> Should.be ""
 
   [<TestMethod>]
   member _.GetTable() =

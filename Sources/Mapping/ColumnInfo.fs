@@ -82,10 +82,10 @@ type ColumnInfo(property: PropertyInfo) =
     | databaseGenerated -> databaseGenerated.DatabaseGeneratedOption
 
   /// Value indicating whether the column can be read.
-  member _.CanRead = property.CanRead
+  member _.CanRead: bool = property.CanRead
 
   /// Value indicating whether the column can be written to.
-  member _.CanWrite = property.CanWrite
+  member _.CanWrite: bool = property.CanWrite
 
   /// The SQL data type of the column.
   member val DbType: DbType =

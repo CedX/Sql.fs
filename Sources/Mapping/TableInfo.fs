@@ -34,10 +34,10 @@ type TableInfo(entityType: Type) =
       | false, _ -> None
 
   /// The table name.
-  member val Name: string = table.Name
+  member _.Name: string = table.Name
 
   /// The table schema, if applicable.
   member val Schema: string option = Option.ofObj table.Schema
 
   /// The entity type associated with this table.
-  member val Type: Type = entityType
+  member _.Type: Type = entityType
