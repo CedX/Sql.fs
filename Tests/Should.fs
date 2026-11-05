@@ -100,102 +100,102 @@ module internal ShouldAsync =
 
   /// Tests whether the specified values are equal.
   let be (expected: 'T) (actual: Async<'T>) = task {
-    let! actual = actual |> Async.StartAsTask
+    let! actual = Async.StartAsTask actual
     return actual |> Should.be expected
   }
 
   /// Tests whether the specified object is an instance of the expected type.
   let beAssignableTo (expectedType: Type) (value: Async<'T>) = task {
-    let! value = value |> Async.StartAsTask
+    let! value = Async.StartAsTask value
     return value |> Should.beAssignableTo expectedType
   }
 
   /// Tests whether the specified sequence is empty.
   let beEmpty (sequence: Async<'T seq>) = task {
-    let! sequence = sequence |> Async.StartAsTask
-    return sequence |> Should.beEmpty
+    let! sequence = Async.StartAsTask sequence
+    return Should.beEmpty sequence
   }
 
   /// Tests whether the specified condition is false.
   let beFalse (condition: Async<bool>) = task {
-    let! condition = condition |> Async.StartAsTask
-    return condition |> Should.beFalse
+    let! condition = Async.StartAsTask condition
+    return Should.beFalse condition
   }
 
   /// Tests whether the specified object is `None`.
   let beNone (option: Async<'T option>) = task {
-    let! option = option |> Async.StartAsTask
-    return option |> Should.beNone
+    let! option = Async.StartAsTask option
+    return Should.beNone option
   }
 
   /// Tests whether the specified object is `null`.
   let beNull (value: Async<'T>) = task {
-    let! value = value |> Async.StartAsTask
-    return value |> Should.beNull
+    let! value = Async.StartAsTask value
+    return Should.beNull value
   }
 
   /// Tests whether the specified object is exactly an instance of the expected type.
   let beOfType (expectedType: Type) (value: Async<'T>) = task {
-    let! value = value |> Async.StartAsTask
+    let! value = Async.StartAsTask value
     return value |> Should.beOfType expectedType
   }
 
   /// Tests whether the specified value is contained in the given sequence.
   let beOneOf (sequence: 'T seq) (value: Async<'T>) = task {
-    let! value = value |> Async.StartAsTask
+    let! value = Async.StartAsTask value
     return value |> Should.beOneOf sequence
   }
 
   /// Tests whether two sequences contain equal elements in the same order.
   let beSequence (expected: 'T seq) (actual: Async<'T seq>) = task {
-    let! actual = actual |> Async.StartAsTask
+    let! actual = Async.StartAsTask actual
     return actual |> Should.beSequence expected
   }
 
   /// Tests whether the specified object is `Some expected` value.
   let beSome (expected: 'T) (option: Async<'T option>) = task {
-    let! option = option |> Async.StartAsTask
+    let! option = Async.StartAsTask option
     return option |> Should.beSome expected
   }
 
   /// Tests whether the specified condition is true.
   let beTrue (condition: Async<bool>) = task {
-    let! condition = condition |> Async.StartAsTask
-    return condition |> Should.beTrue
+    let! condition = Async.StartAsTask condition
+    return Should.beTrue condition
   }
 
   /// Tests whether the specified string ends with the given suffix.
   let endWith (expectedSuffix: string) (value: Async<string>) = task {
-    let! value = value |> Async.StartAsTask
+    let! value = Async.StartAsTask value
     return value |> Should.endWith expectedSuffix
   }
 
   /// Tests whether the specified string matches the given regular expression.
   let matchRegex (pattern: Regex) (value: Async<string>) = task {
-    let! value = value |> Async.StartAsTask
+    let! value = Async.StartAsTask value
     return value |> Should.matchRegex pattern
   }
 
   /// Tests whether the specified values are unequal.
   let notBe (notExpected: 'T) (actual: Async<'T>) = task {
-    let! actual = actual |> Async.StartAsTask
+    let! actual = Async.StartAsTask actual
     return actual |> Should.notBe notExpected
   }
 
   /// Tests whether the specified object is not `null`.
   let notBeNull (value: Async<'T>) = task {
-    let! value = value |> Async.StartAsTask
-    return value |> Should.notBeNull
+    let! value = Async.StartAsTask value
+    return Should.notBeNull value
   }
 
   /// Tests whether the specified string does not match the given regular expression.
   let notMatchRegex (pattern: Regex) (value: Async<string>) = task {
-    let! value = value |> Async.StartAsTask
+    let! value = Async.StartAsTask value
     return value |> Should.notMatchRegex pattern
   }
 
   /// Tests whether the specified string begins with the given prefix.
   let startWith (expectedPrefix: string) (value: Async<string>) = task {
-    let! value = value |> Async.StartAsTask
+    let! value = Async.StartAsTask value
     return value |> Should.startWith expectedPrefix
   }
