@@ -86,8 +86,6 @@ type MapperTests() =
     [| -123.456; typeof<string>; true; "-123.456" |]
     [| "123"; typeof<string>; false; "123" |]
     [| "-123.456"; typeof<string>; true; "-123.456" |]
-
-    // TODO ajouter des tests pour les options!!!!
   ]
 
   [<TestMethod; DynamicData "ChangeTypeData">]
