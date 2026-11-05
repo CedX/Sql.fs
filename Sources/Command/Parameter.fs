@@ -67,6 +67,10 @@ type Parameter(name: string, ?value: objnull) =
 type ParameterCollection([<ParamArray>] parameters: Parameter array) =
   inherit ResizeArray<Parameter>(parameters)
 
+  /// Creates a new parameter collection from the specified sequence of parameters.
+  new(parameters: Parameter seq) =
+    ParameterCollection(Array.ofSeq parameters)
+
   /// Creates a new parameter collection from the specified sequence of named parameters.
   new(parameters: (string * objnull) seq) =
     ParameterCollection(parameters |> Seq.map(fun (key, value) -> Parameter(key, value)) |> Array.ofSeq)
