@@ -6,8 +6,8 @@ open System.Data
 open System.Diagnostics.CodeAnalysis
 
 /// Represents a parameter of a parameterized SQL statement.
-type Parameter(?name: string, ?value: objnull) =
-  let mutable paramName = Parameter.NormalizeName(defaultArg name "?")
+type Parameter(name: string, ?value: objnull) =
+  let mutable paramName = Parameter.NormalizeName name
   let mutable paramValue = Parameter.NormalizeValue(defaultArg value null)
 
   /// The prefixes used for parameter placeholders.

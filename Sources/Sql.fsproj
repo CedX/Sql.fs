@@ -42,5 +42,6 @@
 		<Compile Include="Mapping/TableInfo.fs" />
 		<Compile Include="Mapping/Mapper.fs" />
 		<Compile Include="Command/ParameterCollection.fs" />
+		<Compile Include="Command/Command.fs" />
 	</ItemGroup>
 </Project>
