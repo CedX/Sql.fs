@@ -18,10 +18,7 @@ type TableInfoTests() =
   [<TestMethod>]
   member _.IdentityColumn() =
     Should.beNone (TableInfo(typeof<ConsoleKeyInfo>).IdentityColumn)
-
-    let identityColumn = TableInfo(typeof<Character>).IdentityColumn
-    Should.beSome identityColumn
-    identityColumn |> Option.get |> _.Name |> Should.be "ID"
+    TableInfo(typeof<Character>).IdentityColumn |> Option.map _.Name |> Should.beSome "ID"
 
   [<TestMethod>]
   member _.Name() =
@@ -37,4 +34,4 @@ type TableInfoTests() =
     Should.beNone (TableInfo(typeof<ConsoleKeyInfo>).Schema)
 
     // It should return the value of the [Table] schema when it is present.
-    TableInfo(typeof<Character>).Schema |> Should.beSomeValue "main"
+    TableInfo(typeof<Character>).Schema |> Should.beSome "main"

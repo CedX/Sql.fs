@@ -4,7 +4,7 @@ based on [ADO.NET](https://learn.microsoft.com/en-us/dotnet/framework/data/adone
 If you like [SQL](https://en.wikipedia.org/wiki/SQL) but dislike the boilerplate of ADO.NET: **SQL Mapper for F#** might be for you!
 
 > [!NOTE]
-> Think of [Dapper](https://www.learndapper.com) and its alternatives, but less advanced/powerful.
+> Think of [Dapper](https://www.learndapper.com) and its alternatives, but specifically designed for F#.
 
 ## Quick start
 Install the latest version of **SQL Mapper for F#** with [NuGet](https://www.nuget.org) package manager:

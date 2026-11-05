@@ -120,11 +120,11 @@ type MapperTests() =
   member _.GetTable() =
     let table = Mapper.Instance.GetTable<Character>()
     table.Name |> Should.be "Characters"
-    table.Schema |> Should.beSomeValue "main"
+    table.Schema |> Should.beSome "main"
     table.Type |> Should.be typeof<Character>
 
     table.Columns.Keys |> Seq.length |> Should.be 5
-    table.IdentityColumn |> Should.beSomeValue table.Columns["ID"]
+    table.IdentityColumn |> Should.beSome table.Columns["ID"]
     table.Columns["gender"].PropertyType |> Should.be typeof<CharacterGender>
     table.Columns["lastName"].PropertyType |> Should.be typeof<string>
 
