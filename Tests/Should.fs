@@ -13,7 +13,7 @@ module internal Should =
     Assert.AreEqual<'T>(expected, actual)
 
   /// Tests whether the specified object is an instance of the expected type.
-  let inline beAssignableTo (expectedType: Type) (value: objnull) =
+  let inline beAssignableTo (expectedType: Type) (value: 'T) =
     Assert.IsInstanceOfType(value, expectedType)
 
   /// Tests whether the specified sequence is empty.
@@ -25,30 +25,30 @@ module internal Should =
     Assert.IsFalse condition
 
   /// Tests whether the specified object is `None`.
-  let inline beNone<'T> (option: 'T option) =
+  let inline beNone (option: 'T option) =
     option |> Option.isNone |> Assert.IsTrue
 
   /// Tests whether the specified object is `null`.
-  let inline beNull (value: objnull) =
+  let inline beNull (value: 'T) =
     Assert.IsNull value
 
   /// Tests whether the specified object is exactly an instance of the expected type.
-  let inline beOfType (expectedType: Type) (value: objnull) =
+  let inline beOfType (expectedType: Type) (value: 'T) =
     Assert.IsExactInstanceOfType(value, expectedType)
 
   /// Tests whether the specified value is contained in the given sequence.
-  let inline beOneOf (sequence: 'T seq) (value: objnull) =
-    Assert.Contains(value, sequence)
+  let inline beOneOf (sequence: 'T seq) (value: 'T) =
+    Assert.Contains<'T>(value, sequence)
 
   /// Tests whether two sequences contain equal elements in the same order.
   let inline beSequence (expected: 'T seq) (actual: 'T seq) =
     Assert.AreSequenceEqual(expected, actual)
 
   /// Tests whether the specified object is `Some expected` value.
-  let beSome<'T> (expected: objnull) (option: 'T option) =
+  let inline beSome (expected: 'T) (option: 'T option) =
     match option with
     | None -> Assert.Fail "The specified option is None."
-    | Some value -> Assert.AreEqual(expected, value)
+    | Some value -> Assert.AreEqual<'T>(expected, value)
 
   /// Tests whether the specified condition is true.
   let inline beTrue (condition: bool) =
@@ -67,7 +67,7 @@ module internal Should =
     Assert.AreNotEqual<'T>(notExpected, actual)
 
   /// Tests whether the specified object is not `null`.
-  let inline notBeNull (value: objnull) =
+  let inline notBeNull (value: 'T) =
     Assert.IsNotNull value
 
   /// Tests whether the specified string does not match the given regular expression.
@@ -105,7 +105,7 @@ module internal ShouldAsync =
   }
 
   /// Tests whether the specified object is an instance of the expected type.
-  let beAssignableTo (expectedType: Type) (value: Async<objnull>) = task {
+  let beAssignableTo (expectedType: Type) (value: Async<'T>) = task {
     let! value = value |> Async.StartAsTask
     return value |> Should.beAssignableTo expectedType
   }
@@ -123,25 +123,25 @@ module internal ShouldAsync =
   }
 
   /// Tests whether the specified object is `None`.
-  let beNone<'T> (option: Async<'T option>) = task {
+  let beNone (option: Async<'T option>) = task {
     let! option = option |> Async.StartAsTask
     return option |> Should.beNone
   }
 
   /// Tests whether the specified object is `null`.
-  let beNull (value: Async<objnull>) = task {
+  let beNull (value: Async<'T>) = task {
     let! value = value |> Async.StartAsTask
     return value |> Should.beNull
   }
 
   /// Tests whether the specified object is exactly an instance of the expected type.
-  let beOfType (expectedType: Type) (value: Async<objnull>) = task {
+  let beOfType (expectedType: Type) (value: Async<'T>) = task {
     let! value = value |> Async.StartAsTask
     return value |> Should.beOfType expectedType
   }
 
   /// Tests whether the specified value is contained in the given sequence.
-  let beOneOf (sequence: 'T seq) (value: Async<objnull>) = task {
+  let beOneOf (sequence: 'T seq) (value: Async<'T>) = task {
     let! value = value |> Async.StartAsTask
     return value |> Should.beOneOf sequence
   }
@@ -153,7 +153,7 @@ module internal ShouldAsync =
   }
 
   /// Tests whether the specified object is `Some expected` value.
-  let beSome<'T> (expected: objnull) (option: Async<'T option>) = task {
+  let beSome (expected: 'T) (option: Async<'T option>) = task {
     let! option = option |> Async.StartAsTask
     return option |> Should.beSome expected
   }
@@ -183,7 +183,7 @@ module internal ShouldAsync =
   }
 
   /// Tests whether the specified object is not `null`.
-  let notBeNull (value: Async<objnull>) = task {
+  let notBeNull (value: Async<'T>) = task {
     let! value = value |> Async.StartAsTask
     return value |> Should.notBeNull
   }

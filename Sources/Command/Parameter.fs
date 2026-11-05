@@ -7,8 +7,8 @@ open System.Diagnostics.CodeAnalysis
 
 /// Represents a parameter of a parameterized SQL statement.
 type Parameter(name: string, ?value: objnull) =
-  let mutable paramName = Parameter.NormalizeName name
-  let mutable paramValue = Parameter.NormalizeValue(defaultArg value null)
+  let mutable parameterName = Parameter.NormalizeName name
+  let mutable parameterValue = Parameter.NormalizeValue(defaultArg value null)
 
   /// The prefixes used for parameter placeholders.
   static let prefixes = [| '?'; '@'; ':'; '$' |]
@@ -21,8 +21,8 @@ type Parameter(name: string, ?value: objnull) =
 
   /// The parameter name.
   member _.Name
-    with get() = paramName
-    and set(value: string) = paramName <- Parameter.NormalizeName value
+    with get() = parameterName
+    and set(value: string) = parameterName <- Parameter.NormalizeName value
 
   /// Indicates the precision of numeric parameters.
   member val Precision: byte option = None with get, set
@@ -36,8 +36,8 @@ type Parameter(name: string, ?value: objnull) =
   /// The parameter value.
   [<NotNull>]
   member _.Value
-    with get() = paramValue
-    and set(value: objnull) = paramValue <- Parameter.NormalizeValue value
+    with get() = parameterValue
+    and set(value: objnull) = parameterValue <- Parameter.NormalizeValue value
 
   /// Converts this parameter into an `IDbDataParameter` object.
   member this.ToDbParameter(command: IDbCommand): IDbDataParameter =
