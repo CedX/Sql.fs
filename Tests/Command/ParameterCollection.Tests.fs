@@ -37,23 +37,23 @@ type ParameterCollectionTests() =
   [<TestMethod>]
   member _.Constructor() =
     // It should create an empty collection by default.
-    let mutable collection = ParameterCollection()
-    collection |> Should.beEmpty
+    let collection = ParameterCollection()
+    Should.beEmpty collection
 
     // It should create a collection from a single parameter.
-    collection <- ParameterCollection(Parameter("?1", 123, DbType = Some DbType.Int64))
+    let collection = ParameterCollection(Parameter("?1", 123, DbType = Some DbType.Int64))
     collection.Count |> Should.be 1
 
-    let mutable parameter = Seq.head collection
+    let parameter = Seq.head collection
     parameter.Name |> Should.be "?1"
     parameter.Value |> Should.be 123
     parameter.DbType |> Should.beSome DbType.Int64
 
     // It should create a collection from a list of parameters.
-    collection <- ParameterCollection(Parameter("?1", 123), Parameter("@Key", "Unique", DbType = Some DbType.AnsiString))
+    let collection = ParameterCollection(Parameter("?1", 123), Parameter("@Key", "Unique", DbType = Some DbType.AnsiString))
     collection.Count |> Should.be 2
 
-    parameter <- Seq.last collection
+    let parameter = Seq.last collection
     parameter.Name |> Should.be "@Key"
     parameter.Value |> Should.be "Unique"
     parameter.DbType |> Should.beSome DbType.AnsiString
@@ -76,12 +76,12 @@ type ParameterCollectionTests() =
     let collection = ParameterCollection()
     Should.beEmpty collection
 
-    let mutable parameter = collection.AddWithValue("Name", "Value1")
+    let parameter = collection.AddWithValue("Name", "Value1")
     collection.Count |> Should.be 1
     parameter.Name |> Should.be "@Name"
     parameter.Value |> Should.be "Value1"
 
-    parameter <- collection.AddWithValue "Value2"
+    let parameter = collection.AddWithValue "Value2"
     collection.Count |> Should.be 2
     parameter.Name |> Should.be "?2"
     parameter.Value |> Should.be "Value2"
@@ -105,7 +105,7 @@ type ParameterCollectionTests() =
   [<TestMethod>]
   member _.RemoveAt() =
     // It should remove the parameter with the specified name.
-    let mutable collection = ParameterCollection ["?1", 123 :> objnull; "@Key", "Unique"]
+    let collection = ParameterCollection ["?1", 123 :> objnull; "@Key", "Unique"]
     collection.Count |> Should.be 2
     collection.RemoveAt "Key"
     collection.Count |> Should.be 1
@@ -113,5 +113,5 @@ type ParameterCollectionTests() =
     Should.beEmpty collection
 
     // It should throw an error if the specified name does not exist.
-    collection <- ParameterCollection ["?1", 123 :> objnull; "@Key", "Unique"]
+    let collection = ParameterCollection ["?1", 123 :> objnull; "@Key", "Unique"]
     (fun () -> collection.RemoveAt "Foo") |> Should.throw typeof<KeyNotFoundException>

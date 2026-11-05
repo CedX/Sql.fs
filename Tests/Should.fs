@@ -74,20 +74,22 @@ module internal Should =
   let inline notMatchRegex (pattern: Regex) (value: string) =
     Assert.DoesNotMatchRegex(pattern, value)
 
-  /// Tests whether the specified delegate action does not throw an exception of the expected type.
+  /// Tests whether the specified action does not throw an exception of the expected type.
   let notThrow (exceptionType: Type) (action: unit -> unit) =
-    try action()
-    with ex when ex.GetType().IsAssignableTo exceptionType ->
-      Assert.Fail "The specified delegate threw an exception of the expected type."
+    try
+      action()
+      Assert.IsTrue true
+    with ex ->
+      Assert.IsNotInstanceOfType(ex, exceptionType)
 
   /// Tests whether the specified string begins with the given prefix.
   let inline startWith (expectedPrefix: string) (value: string) =
     Assert.StartsWith(expectedPrefix, value)
 
-  /// Tests whether the specified delegate action throws an exception of the expected type.
+  /// Tests whether the specified action throws an exception of the expected type.
   let throw (exceptionType: Type) (action: unit -> unit) =
     try
       action()
-      Assert.Fail "The specified delegate did not throw any exception."
-    with ex when not (ex.GetType().IsAssignableTo exceptionType) ->
-      Assert.Fail "The specified delegate did not throw an exception of the expected type."
+      Assert.Fail "The specified action did not throw any exception."
+    with ex ->
+      Assert.IsInstanceOfType(ex, exceptionType)

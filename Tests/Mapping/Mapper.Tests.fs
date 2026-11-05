@@ -163,22 +163,22 @@ type MapperTests() =
     ]
 
     // It should return a dictionary equivalent to the specified data row.
-    let mutable records = Mapper.SplitOn record
+    let records = Mapper.SplitOn record
     records.Count |> Should.be 1
     records[0] |> Should.beSequence properties
 
     // It should not split the data row if the specified field does not exist.
-    records <- Mapper.SplitOn(record, "_NonExistent_")
+    let records = Mapper.SplitOn(record, "_NonExistent_")
     records.Count |> Should.be 1
     records[0] |> Should.beSequence properties
 
     // It should split the data row according to the specified fields.
-    records <- Mapper.SplitOn(record, "id")
+    let records = Mapper.SplitOn(record, "id")
     records.Count |> Should.be 2
     records[0] |> Should.beSequence (dict ["Id", 123; "LongLabel", "Hello World!"; "ShortLabel", null])
     records[1] |> Should.beSequence (dict ["Id", 456; "FirstName", "Cédric"; "LastName", "Belin"; "RowID", 789])
 
-    records <- Mapper.SplitOn(record, "id", "rowid", "_Unused_")
+    let records = Mapper.SplitOn(record, "id", "rowid", "_Unused_")
     records.Count |> Should.be 3
     records[0] |> Should.beSequence (dict ["Id", 123; "LongLabel", "Hello World!"; "ShortLabel", null])
     records[1] |> Should.beSequence (dict ["Id", 456; "FirstName", "Cédric"; "LastName", "Belin"])
