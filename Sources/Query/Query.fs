@@ -18,8 +18,16 @@ module QueryExtensions =
       Mapper.Instance.CreateInstances<'T> reader |> Seq.toList
 
     /// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
+    member this.Query(command: string, ?parameters: ParameterCollection): 'T list =
+      this.Query<'T>(Command command, ?parameters = parameters)
+
+    /// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
     member this.Query(command: Command, ?parameters: ParameterCollection): Map<string, objnull> list =
       this.Query<Map<string, objnull>>(command, ?parameters = parameters)
+
+    /// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
+    member this.Query(command: string, ?parameters: ParameterCollection): Map<string, objnull> list =
+      this.Query<Map<string, objnull>>(Command command, ?parameters = parameters)
 
     /// Executes a parameterized SQL query and returns a sequence of object pairs whose properties correspond to the columns.
     member this.Query(command: Command, ?parameters: ParameterCollection, ?splitOn: string): ('Item1 * 'Item2) list =
@@ -27,6 +35,10 @@ module QueryExtensions =
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters)
       use reader = dbCommand.ExecuteReader()
       Mapper.Instance.CreateInstances<'Item1, 'Item2>(reader, ?splitOn = splitOn) |> Seq.toList
+
+    /// Executes a parameterized SQL query and returns a sequence of object pairs whose properties correspond to the columns.
+    member this.Query(command: string, ?parameters: ParameterCollection, ?splitOn: string): ('Item1 * 'Item2) list =
+      this.Query<'Item1, 'Item2>(Command command, ?parameters = parameters, ?splitOn = splitOn)
 
     /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
     member this.Query(command: Command, ?parameters: ParameterCollection, ?splitOn: string * string): ('Item1 * 'Item2 * 'Item3) list =
@@ -36,11 +48,19 @@ module QueryExtensions =
       Mapper.Instance.CreateInstances<'Item1, 'Item2, 'Item3>(reader, ?splitOn = splitOn) |> Seq.toList
 
     /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
+    member this.Query(command: string, ?parameters: ParameterCollection, ?splitOn: string * string): ('Item1 * 'Item2 * 'Item3) list =
+      this.Query<'Item1, 'Item2, 'Item3>(Command command, ?parameters = parameters, ?splitOn = splitOn)
+
+    /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
     member this.Query(command: Command, ?parameters: ParameterCollection, ?splitOn: string * string * string): ('Item1 * 'Item2 * 'Item3 * 'Item4) list =
       if this.State = ConnectionState.Closed then this.Open()
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters)
       use reader = dbCommand.ExecuteReader()
       Mapper.Instance.CreateInstances<'Item1, 'Item2, 'Item3, 'Item4>(reader, ?splitOn = splitOn) |> Seq.toList
+
+    /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
+    member this.Query(command: string, ?parameters: ParameterCollection, ?splitOn: string * string * string): ('Item1 * 'Item2 * 'Item3 * 'Item4) list =
+      this.Query<'Item1, 'Item2, 'Item3, 'Item4>(Command command, ?parameters = parameters, ?splitOn = splitOn)
 
   type DbConnection with
     /// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
