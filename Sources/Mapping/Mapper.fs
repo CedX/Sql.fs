@@ -61,29 +61,29 @@ type Mapper private () =
     this.CreateInstance<Map<string, objnull>> record
 
   /// Creates a new object pair of the given types from the specified data record.
-  member this.CreateInstance(record: IDataRecord, ?splitOn: string): 'TItem1 * 'TItem2 =
+  member this.CreateInstance(record: IDataRecord, ?splitOn: string): 'Item1 * 'Item2 =
     let records = Mapper.SplitOn(record, defaultArg splitOn "Id")
-    let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'TItem1> else this.CreateInstance<'TItem1>(records[0])
-    let item2 = if records.Count <= 1 || Mapper.IsNullRecord(records[1]) then Unchecked.defaultof<'TItem2> else this.CreateInstance<'TItem2>(records[1])
+    let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'Item1> else this.CreateInstance<'Item1>(records[0])
+    let item2 = if records.Count <= 1 || Mapper.IsNullRecord(records[1]) then Unchecked.defaultof<'Item2> else this.CreateInstance<'Item2>(records[1])
     item1, item2
 
   /// Creates a new object tuple of the given types from the specified data record.
-  member this.CreateInstance(record: IDataRecord, ?splitOn: string * string): 'TItem1 * 'TItem2 * 'TItem3 =
+  member this.CreateInstance(record: IDataRecord, ?splitOn: string * string): 'Item1 * 'Item2 * 'Item3 =
     let firstField, secondField = defaultArg splitOn ("Id", "Id")
     let records = Mapper.SplitOn(record, firstField, secondField)
-    let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'TItem1> else this.CreateInstance<'TItem1>(records[0])
-    let item2 = if records.Count <= 1 || Mapper.IsNullRecord(records[1]) then Unchecked.defaultof<'TItem2> else this.CreateInstance<'TItem2>(records[1])
-    let item3 = if records.Count <= 2 || Mapper.IsNullRecord(records[2]) then Unchecked.defaultof<'TItem3> else this.CreateInstance<'TItem3>(records[2])
+    let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'Item1> else this.CreateInstance<'Item1>(records[0])
+    let item2 = if records.Count <= 1 || Mapper.IsNullRecord(records[1]) then Unchecked.defaultof<'Item2> else this.CreateInstance<'Item2>(records[1])
+    let item3 = if records.Count <= 2 || Mapper.IsNullRecord(records[2]) then Unchecked.defaultof<'Item3> else this.CreateInstance<'Item3>(records[2])
     item1, item2, item3
 
   /// Creates a new object tuple of the given types from the specified data record.
-  member this.CreateInstance(record: IDataRecord, ?splitOn: string * string * string): 'TItem1 * 'TItem2 * 'TItem3 * 'TItem4 =
+  member this.CreateInstance(record: IDataRecord, ?splitOn: string * string * string): 'Item1 * 'Item2 * 'Item3 * 'Item4 =
     let firstField, secondField, thirdField = defaultArg splitOn ("Id", "Id", "Id")
     let records = Mapper.SplitOn(record, firstField, secondField, thirdField)
-    let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'TItem1> else this.CreateInstance<'TItem1>(records[0])
-    let item2 = if records.Count <= 1 || Mapper.IsNullRecord(records[1]) then Unchecked.defaultof<'TItem2> else this.CreateInstance<'TItem2>(records[1])
-    let item3 = if records.Count <= 2 || Mapper.IsNullRecord(records[2]) then Unchecked.defaultof<'TItem3> else this.CreateInstance<'TItem3>(records[2])
-    let item4 = if records.Count <= 3 || Mapper.IsNullRecord(records[3]) then Unchecked.defaultof<'TItem4> else this.CreateInstance<'TItem4>(records[3])
+    let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'Item1> else this.CreateInstance<'Item1>(records[0])
+    let item2 = if records.Count <= 1 || Mapper.IsNullRecord(records[1]) then Unchecked.defaultof<'Item2> else this.CreateInstance<'Item2>(records[1])
+    let item3 = if records.Count <= 2 || Mapper.IsNullRecord(records[2]) then Unchecked.defaultof<'Item3> else this.CreateInstance<'Item3>(records[2])
+    let item4 = if records.Count <= 3 || Mapper.IsNullRecord(records[3]) then Unchecked.defaultof<'Item4> else this.CreateInstance<'Item4>(records[3])
     item1, item2, item3, item4
 
   /// Creates new objects of the given type from the specified data reader.
@@ -97,21 +97,21 @@ type Mapper private () =
     this.CreateInstances<Map<string, objnull>> reader
 
   /// Creates new object pairs of the given types from the specified data reader.
-  member this.CreateInstances(reader: IDataReader, ?splitOn: string): ('TItem1 * 'TItem2) seq = seq {
+  member this.CreateInstances(reader: IDataReader, ?splitOn: string): ('Item1 * 'Item2) seq = seq {
     use record = reader
-    while record.Read() do yield this.CreateInstance<'TItem1, 'TItem2>(record, ?splitOn = splitOn)
+    while record.Read() do yield this.CreateInstance<'Item1, 'Item2>(record, ?splitOn = splitOn)
   }
 
   /// Creates new object tuples of the given types from the specified data reader.
-  member this.CreateInstances(reader: IDataReader, ?splitOn: string * string): ('TItem1 * 'TItem2 * 'TItem3) seq = seq {
+  member this.CreateInstances(reader: IDataReader, ?splitOn: string * string): ('Item1 * 'Item2 * 'Item3) seq = seq {
     use record = reader
-    while record.Read() do yield this.CreateInstance<'TItem1, 'TItem2, 'TItem3>(record, ?splitOn = splitOn)
+    while record.Read() do yield this.CreateInstance<'Item1, 'Item2, 'Item3>(record, ?splitOn = splitOn)
   }
 
   /// Creates new object tuples of the given types from the specified data reader.
-  member this.CreateInstances(reader: IDataReader, ?splitOn: string * string * string): ('TItem1 * 'TItem2 * 'TItem3 * 'TItem4) seq = seq {
+  member this.CreateInstances(reader: IDataReader, ?splitOn: string * string * string): ('Item1 * 'Item2 * 'Item3 * 'Item4) seq = seq {
     use record = reader
-    while record.Read() do yield this.CreateInstance<'TItem1, 'TItem2, 'TItem3, 'TItem4>(record, ?splitOn = splitOn)
+    while record.Read() do yield this.CreateInstance<'Item1, 'Item2, 'Item3, 'Item4>(record, ?splitOn = splitOn)
   }
 
   /// Returns a value indicating whether all values of the specified dictionary are `null`.
