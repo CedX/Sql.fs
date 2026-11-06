@@ -21,14 +21,6 @@ module QueryExtensions =
     member this.Query(command: string, ?parameters: ParameterCollection): 'T list =
       this.Query<'T>(Command command, ?parameters = parameters)
 
-    /// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
-    member this.Query(command: Command, ?parameters: ParameterCollection): Map<string, objnull> list =
-      this.Query<Map<string, objnull>>(command, ?parameters = parameters)
-
-    /// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
-    member this.Query(command: string, ?parameters: ParameterCollection): Map<string, objnull> list =
-      this.Query<Map<string, objnull>>(Command command, ?parameters = parameters)
-
     /// Executes a parameterized SQL query and returns a sequence of object pairs whose properties correspond to the columns.
     member this.Query(command: Command, ?parameters: ParameterCollection, ?splitOn: string): ('Item1 * 'Item2) list =
       if this.State = ConnectionState.Closed then this.Open()
@@ -75,8 +67,8 @@ module QueryExtensions =
     }
 
     /// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
-    member this.AsyncQuery(command: Command, ?parameters: ParameterCollection, ?cancellationToken: CancellationToken): Async<Map<string, objnull> list> =
-      this.AsyncQuery<Map<string, objnull>>(command, ?parameters = parameters, ?cancellationToken = cancellationToken)
+    member this.AsyncQuery(command: string, ?parameters: ParameterCollection, ?cancellationToken: CancellationToken): Async<'T list> =
+      this.AsyncQuery<'T>(Command command, ?parameters = parameters, ?cancellationToken = cancellationToken)
 
     /// Executes a parameterized SQL query and returns a sequence of object pairs whose properties correspond to the columns.
     member this.AsyncQuery(command: Command, ?parameters: ParameterCollection, ?splitOn: string, ?cancellationToken: CancellationToken): Async<('Item1 * 'Item2) list> = async {
@@ -88,6 +80,10 @@ module QueryExtensions =
       use! reader = dbCommand.ExecuteReaderAsync token |> Async.AwaitTask
       return Mapper.Instance.CreateInstances<'Item1, 'Item2>(reader, ?splitOn = splitOn) |> Seq.toList
     }
+
+    /// Executes a parameterized SQL query and returns a sequence of object pairs whose properties correspond to the columns.
+    member this.AsyncQuery(command: string, ?parameters: ParameterCollection, ?splitOn: string, ?cancellationToken: CancellationToken): Async<('Item1 * 'Item2) list> =
+      this.AsyncQuery<'Item1, 'Item2>(Command command, ?parameters = parameters, ?cancellationToken = cancellationToken)
 
     /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
     member this.AsyncQuery(command: Command, ?parameters: ParameterCollection, ?splitOn: string * string, ?cancellationToken: CancellationToken): Async<('Item1 * 'Item2 * 'Item3) list> = async {
@@ -101,6 +97,10 @@ module QueryExtensions =
     }
 
     /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
+    member this.AsyncQuery(command: string, ?parameters: ParameterCollection, ?splitOn: string * string, ?cancellationToken: CancellationToken): Async<('Item1 * 'Item2 * 'Item3) list> =
+      this.AsyncQuery<'Item1, 'Item2, 'Item3>(Command command, ?parameters = parameters, ?cancellationToken = cancellationToken)
+
+    /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
     member this.AsyncQuery(command: Command, ?parameters: ParameterCollection, ?splitOn: string * string * string, ?cancellationToken: CancellationToken): Async<('Item1 * 'Item2 * 'Item3 * 'Item4) list> = async {
       let! ambientToken = Async.CancellationToken
       let token = defaultArg cancellationToken ambientToken
@@ -110,3 +110,7 @@ module QueryExtensions =
       use! reader = dbCommand.ExecuteReaderAsync token |> Async.AwaitTask
       return Mapper.Instance.CreateInstances<'Item1, 'Item2, 'Item3, 'Item4>(reader, ?splitOn = splitOn) |> Seq.toList
     }
+
+    /// Executes a parameterized SQL query and returns a sequence of object tuples whose properties correspond to the columns.
+    member this.AsyncQuery(command: string, ?parameters: ParameterCollection, ?splitOn: string * string * string, ?cancellationToken: CancellationToken): Async<('Item1 * 'Item2 * 'Item3 * 'Item4) list> =
+      this.AsyncQuery<'Item1, 'Item2, 'Item3, 'Item4>(Command command, ?parameters = parameters, ?cancellationToken = cancellationToken)

@@ -39,8 +39,7 @@ type Mapper private () =
     if typeof<'T> = typeof<Map<string, objnull>> then
       record
       |> Seq.map (fun entry -> entry.Key, entry.Value)
-      |> Map.ofSeq
-      |> fun map -> (map :> obj) :?> 'T
+      |> Map.ofSeq :> obj :?> 'T
     else
       let instance = Activator.CreateInstance<'T>()
       let table = this.GetTable<'T>()
@@ -49,17 +48,9 @@ type Mapper private () =
         if column.CanWrite then column.SetValue(instance, this.ChangeType(record[name], column))
       instance
 
-  /// Creates a new map from the specified dictionary.
-  member this.CreateInstance(record: IDictionary<string, objnull>): Map<string, objnull> =
-    this.CreateInstance<Map<string, objnull>> record
-
   /// Creates a new object of the given type from the specified data record.
   member this.CreateInstance(record: IDataRecord): 'T =
     this.CreateInstance<'T>(Mapper.SplitOn record |> Seq.exactlyOne)
-
-  /// Creates a new map from the specified data record.
-  member this.CreateInstance(record: IDataRecord): Map<string, objnull> =
-    this.CreateInstance<Map<string, objnull>> record
 
   /// Creates a new object pair of the given types from the specified data record.
   member this.CreateInstance(record: IDataRecord, ?splitOn: string): 'Item1 * 'Item2 =
@@ -92,10 +83,6 @@ type Mapper private () =
     use record = reader
     while record.Read() do yield this.CreateInstance<'T> record
   }
-
-  /// Creates new maps from the specified data reader.
-  member this.CreateInstances(reader: IDataReader): Map<string, objnull> seq =
-    this.CreateInstances<Map<string, objnull>> reader
 
   /// Creates new object pairs of the given types from the specified data reader.
   member this.CreateInstances(reader: IDataReader, ?splitOn: string): ('Item1 * 'Item2) seq = seq {

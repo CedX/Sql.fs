@@ -137,8 +137,8 @@ type MapperTests() =
       "lastName", null
     ]
 
-    // It should create a `Map<string, objnull>` by default.
-    let map = Mapper.Instance.CreateInstance properties
+    // It should support creating an object of type `Map<string, objnull>`.
+    let map = Mapper.Instance.CreateInstance<Map<string, objnull>> properties
     map |> Should.beOfType typeof<Map<string, objnull>>
     map["CLASS"] |> Should.be "Bard/minstrel"
     map["firstName"] |> Should.be "Cédric"
