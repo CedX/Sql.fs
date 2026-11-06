@@ -101,7 +101,7 @@ type MapperTests() =
       "lastName", null
     ]
 
-    // It should create an `ExpandoObject` by default.
+    // It should create a `Map<string, objnull>` by default.
     let map = Mapper.Instance.CreateInstance properties
     map |> Should.beOfType typeof<Map<string, objnull>>
     map["CLASS"] |> Should.be "Bard/minstrel"

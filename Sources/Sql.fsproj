@@ -45,5 +45,6 @@
 		<Compile Include="Command/Command.fs" />
 		<Compile Include="Query/Execute.fs" />
 		<Compile Include="Query/ExecuteScalar.fs" />
+		<Compile Include="Query/Query.fs" />
 	</ItemGroup>
 </Project>
