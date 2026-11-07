@@ -83,7 +83,7 @@ type CommandBuilderTests() =
 
   // [<TestMethod>]
   // member _.GetFindAllCommand() =
-  //   let builder = CommandBuilder.Create(connection)
+  //   let builder = CommandBuilder.Create connection
 
   //   // It should return the SQL command to find all entities.
   //   let command, parameters = builder.GetFindAllCommand<Character>()
@@ -122,28 +122,28 @@ type CommandBuilderTests() =
     parameters["gender"].Value |> Should.be (nameof CharacterGender.DarkLord)
     parameters["lastName"].Value |> Should.be ""
 
-  // [<TestMethod>]
-  // member _.GetUpdateCommand() =
-  //   let builder = CommandBuilder.Create(connection)
+  [<TestMethod>]
+  member _.GetUpdateCommand() =
+    let builder = CommandBuilder.Create connection
 
-  //   // It should return the SQL command to update an entity.
-  //   let command, parameters = builder.GetUpdateCommand(character)
-  //   Assert.StartsWith(@"UPDATE ""main"".""Characters""", command.Text)
-  //   Assert.Contains(@"SET """, command.Text)
-  //   Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text)
+    // It should return the SQL command to update an entity.
+    let command, parameters = builder.GetUpdateCommand character
+    command.Text |> Should.startWith @"UPDATE ""main"".""Characters"""
+    command.Text |> Should.containString @"SET """
+    command.Text |> Should.endWith @"WHERE ""ID"" = @ID"
 
-  //   // It should also return the parameters used by the SQL command.
-  //   Assert.HasCount(4, parameters)
-  //   Assert.AreEqual(1_000, parameters["ID"].Value)
-  //   Assert.AreEqual("Cédric", parameters["firstName"].Value)
-  //   Assert.AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value)
-  //   Assert.AreEqual("", parameters["lastName"].Value)
+    // It should also return the parameters used by the SQL command.
+    parameters.Count |> Should.be 4
+    parameters["ID"].Value |> Should.be 1_000
+    parameters["firstName"].Value |> Should.be "Cédric"
+    parameters["gender"].Value |> Should.be (nameof CharacterGender.DarkLord)
+    parameters["lastName"].Value |> Should.be ""
 
-  //   // It should allow updating a specific set of columns.
-  //   (_, parameters) = builder.GetUpdateCommand(character, "firstName")
-  //   Assert.HasCount(2, parameters)
-  //   Assert.AreEqual(1_000, parameters["ID"].Value)
-  //   Assert.AreEqual("Cédric", parameters["firstName"].Value)
+    // It should allow updating a specific set of columns.
+    let _, parameters = builder.GetUpdateCommand(character, "firstName")
+    parameters.Count |> Should.be 2
+    parameters["ID"].Value |> Should.be 1_000
+    parameters["firstName"].Value |> Should.be "Cédric"
 
   /// Given an unquoted identifier, returns the correct quoted form of that identifier.
   [<TestMethod>]

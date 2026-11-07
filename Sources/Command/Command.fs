@@ -182,31 +182,44 @@ type CommandBuilder() =
       {if this.SupportsReturningClause then $"RETURNING {this.QuoteIdentifier idColumn.Name}" else $"; SELECT {this.LastInsertIdFunction};"}
       """
 
-    Command text, ParameterCollection(fields
+    let parameters =
+      fields
       |> Seq.indexed
       |> Seq.map (fun (index, field) -> Parameter(
         (if this.UsePositionalParameters then $"?{index + 1}" else this.GetParameterName field),
-        this.GetParameterValue(field, entity))))
+        this.GetParameterValue(field, entity)))
+
+    Command text, ParameterCollection parameters
 
   /// Gets the generated command to update an entity.
-  // member this.GetUpdateCommand(entity: 'T, [<ParamArray>] columns: string array): Command * ParameterCollection =
-  //   let table = Mapper.Instance.GetTable<'T>()
-  //   let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
+  member this.GetUpdateCommand(entity: 'T, [<ParamArray>] columns: string array): Command * ParameterCollection =
+    let table = Mapper.Instance.GetTable<'T>()
+    let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
-  //   let fields = (columns.Length = 0 ? table.Columns.Values : table.Columns.Values.Where(column -> columns.Contains(column.Name)))
-  //     .Where(column -> column.CanRead && !column.IsComputed)
-  //     .ToArray()
+    let fields =
+      if columns.Length = 0 then table.Columns.Values else table.Columns.Values |> Seq.filter (fun column -> columns |> Array.contains column.Name)
+      |> Seq.filter (fun column -> column.CanRead && not column.IsComputed)
+      |> Seq.toArray
 
-  //   let text = CommandBuilder.NormalizeCommand $"""
-  //     UPDATE {this.GetTableName table}
-  //     SET {string.Join(", ", fields.Select(field -> $"{QuoteIdentifier(field.Name)} = {(UsePositionalParameters ? "?" : GetParameterName(field))}"))}
-  //     WHERE {this.QuoteIdentifier idColumn.Name} = {(UsePositionalParameters ? "?" : GetParameterName(idColumn))}
-  //     """
+    let formatAssignment (field: ColumnInfo) =
+      $"""{this.QuoteIdentifier field.Name} = {if this.UsePositionalParameters then "?" else this.GetParameterName field}"""
 
-  //   return (text, [
-  //     .. fields.Select((field, index) -> (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(field, entity))),
-  //     (UsePositionalParameters ? $"?{fields.Length + 1}" : GetParameterName(idColumn), GetParameterValue(idColumn, entity))
-  //   ])
+    let text = CommandBuilder.NormalizeCommand $"""
+      UPDATE {this.GetTableName table}
+      SET { fields |> Seq.map formatAssignment |> String.concat ", "}
+      WHERE {this.QuoteIdentifier idColumn.Name} = {if this.UsePositionalParameters then "?" else this.GetParameterName idColumn}
+      """
+
+    let parameters =
+      fields
+      |> Seq.indexed
+      |> Seq.map (fun (index, field) -> Parameter(
+        (if this.UsePositionalParameters then $"?{index + 1}" else this.GetParameterName field),
+        this.GetParameterValue(field, entity)))
+
+    let idParameter = Parameter(if this.UsePositionalParameters then $"?{fields.Length + 1}" else this.GetParameterName idColumn)
+    idParameter.Value <- this.GetParameterValue(idColumn, entity)
+    Command text, ParameterCollection(Seq.append parameters (Seq.singleton idParameter))
 
   /// Given an unquoted identifier, returns the correct quoted form of that identifier.
   member this.QuoteIdentifier(unquotedIdentifier: string) =
