@@ -27,7 +27,7 @@ type Character =
 
     /// The character's gender.
     [<Column("gender", TypeName = nameof(DbType.AnsiString))>]
-    Gender: CharacterGender
+    mutable Gender: CharacterGender
 
     /// The character's identifier.
     [<Column("ID"); DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
@@ -35,7 +35,7 @@ type Character =
 
     /// The last name.
     [<Column "lastName">]
-    LastName: string
+    mutable LastName: string
   }
 
   /// Creates a new instance with default values.

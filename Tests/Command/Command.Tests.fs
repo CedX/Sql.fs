@@ -32,7 +32,7 @@ type CommandBuilderTests() =
     command.Text |> Should.endWith @"WHERE ""ID"" = @ID"
 
     // It should also return the parameters used by the SQL command.
-    let parameter = parameters |> Seq.exactlyOne
+    let parameter = Seq.exactlyOne parameters
     parameter.Name |> Should.be "@ID"
     parameter.Value |> Should.be 1_000
 

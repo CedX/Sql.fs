@@ -222,18 +222,18 @@ type CommandBuilder() =
     Command text, ParameterCollection(Seq.append parameters (Seq.singleton idParameter))
 
   /// Given an unquoted identifier, returns the correct quoted form of that identifier.
-  member this.QuoteIdentifier(unquotedIdentifier: string) =
+  member this.QuoteIdentifier(unquotedIdentifier: string): string =
     $"{this.QuotePrefix}{unquotedIdentifier.Replace(this.QuoteSuffix, this.QuoteSuffix + this.QuoteSuffix)}{this.QuoteSuffix}"
 
   /// Given a quoted identifier, returns the correct unquoted form of that identifier.
-  member this.UnquoteIdentifier(quotedIdentifier: string) =
-    let mutable id = quotedIdentifier
-    if id.StartsWith(this.QuotePrefix, StringComparison.Ordinal) then id <- id[this.QuotePrefix.Length..]
-    if id.EndsWith(this.QuoteSuffix, StringComparison.Ordinal) then id <- id.Substring(0, id.Length - this.QuoteSuffix.Length)
-    id.Replace(this.QuoteSuffix + this.QuoteSuffix, this.QuoteSuffix)
+  member this.UnquoteIdentifier(quotedIdentifier: string): string =
+    let mutable identifier = quotedIdentifier
+    if identifier.StartsWith(this.QuotePrefix, StringComparison.Ordinal) then identifier <- identifier[this.QuotePrefix.Length..]
+    if identifier.EndsWith(this.QuoteSuffix, StringComparison.Ordinal) then identifier <- identifier.Substring(0, identifier.Length - this.QuoteSuffix.Length)
+    identifier.Replace(this.QuoteSuffix + this.QuoteSuffix, this.QuoteSuffix)
 
   /// Normalizes the specified command text.
-  static member internal NormalizeCommand(text: string) =
+  static member internal NormalizeCommand(text: string): string =
     whiteSpacePattern.Replace(text, " ").Trim()
 
   /// Returns the parameter name corresponding to the specified column.
