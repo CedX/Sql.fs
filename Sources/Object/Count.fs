@@ -18,7 +18,7 @@ module ObjectCountExtensions =
 
   type DbConnection with
     /// Counts all entities.
-    member this.CountAllAsync<'T>(?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<int> = async {
+    member this.AsyncCountAll<'T>(?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<int> = async {
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetCountAllCommand<'T>()
       command.Timeout <- defaultArg timeout 30
