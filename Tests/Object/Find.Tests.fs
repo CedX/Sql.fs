@@ -51,14 +51,14 @@ type ObjectFindExtensionsTests() =
   [<TestMethod>]
   member _.AsyncFind(): Task = task {
     // It should find the record with the specified identifier.
-    let! record = connection.FindAsync<Character> 2
+    let! record = connection.AsyncFind<Character> 2
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
       character.Id |> Should.be 2
       character.FullName |> Should.be (Some "Balin")
 
-    let! record = connection.FindAsync<Character> 14
+    let! record = connection.AsyncFind<Character> 14
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
@@ -66,14 +66,14 @@ type ObjectFindExtensionsTests() =
       character.FullName |> Should.be (Some "Sam Gamgee")
 
     // It should allow selecting a specific set of columns.
-    let! record = connection.FindAsync<Character>(2, [| "gender" |])
+    let! record = connection.AsyncFind<Character>(2, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
       character.FullName |> Should.be None
       character.Gender |> Should.be CharacterGender.Dwarf
 
-    let! record = connection.FindAsync<Character>(14, [| "gender" |])
+    let! record = connection.AsyncFind<Character>(14, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
@@ -81,7 +81,7 @@ type ObjectFindExtensionsTests() =
       character.Gender |> Should.be CharacterGender.Hobbit
 
     // It should return `None` if the record is not found.
-    do! connection.FindAsync<Character> 666 |> ShouldAsync.be None
+    do! connection.AsyncFind<Character> 666 |> ShouldAsync.be None
   }
 
   // [<TestMethod>]
@@ -114,7 +114,7 @@ type ObjectFindExtensionsTests() =
   // [<TestMethod>]
   // member _.AsyncFindAll(): Task = task {
   //   // It should return the complete list of entities, sorted by default according to the identity column.
-  //   let records = await connection.FindAllAsync<Character>(
+  //   let records = await connection.AsyncFindAll<Character>(
   //   Assert.HasCount(16, records)
   //   Assert.AreEqual(1, records[0].Id)
   //   Assert.AreEqual("Aragorn", records[0].FullName)
@@ -122,7 +122,7 @@ type ObjectFindExtensionsTests() =
   //   Assert.AreEqual("Sauron", records[15].FullName)
 
   //   // It should allow sorting the results by a specific set of columns.
-  //   records = await connection.FindAllAsync<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)],
+  //   records = await connection.AsyncFindAll<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)],
   //   Assert.HasCount(16, records)
   //   Assert.AreEqual(11, records[0].Id)
   //   Assert.AreEqual("Gothmog", records[0].FullName)
@@ -130,7 +130,7 @@ type ObjectFindExtensionsTests() =
   //   Assert.AreEqual("Gandalf", records[15].FullName)
 
   //   // It should allow selecting a specific set of columns.
-  //   records = await connection.FindAllAsync<Character>(columns: [| "gender" |],
+  //   records = await connection.AsyncFindAll<Character>(columns: [| "gender" |],
   //   Assert.AreEqual(1, records[0].Id)
   //   Assert.AreEqual(CharacterGender.Human, records[0].Gender)
   //   records[0].FullName |> Should.beNull

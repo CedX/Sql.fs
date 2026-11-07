@@ -39,5 +39,10 @@ type Character =
   }
 
   /// Creates a new instance with default values.
-  static member Default =
-    { FirstName = ""; FullName = None; Gender = CharacterGender.Human; Id = 0; LastName = "" }
+  static member Default = {
+    FirstName = ""
+    FullName = None
+    Gender = CharacterGender.Human
+    Id = 0
+    LastName = ""
+  }

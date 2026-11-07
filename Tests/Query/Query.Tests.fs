@@ -21,7 +21,7 @@ type DbConnectionExtensionsTests() =
     let records = connection.Query<Character>(sql, parameters)
     records.Length |> Should.be 3
 
-    let elrond = records[0]
+    let elrond = List.head records
     elrond.FullName |> Should.be (Some "Elrond")
     elrond.Gender |> Should.be CharacterGender.Elf
 
@@ -35,7 +35,7 @@ type DbConnectionExtensionsTests() =
     let objects = connection.Query<Map<string, objnull>, Map<string, objnull>>(sql, parameters)
     objects.Length |> Should.be 1
 
-    let left, right = objects[0]
+    let left, right = List.head objects
     left["ID"] |> Should.be 6L
     left["firstName"] |> Should.be "Frodo"
     left["lastName"] |> Should.be "Baggins"
@@ -53,7 +53,7 @@ type DbConnectionExtensionsTests() =
     let! records = connection.AsyncQuery<Character>(sql, parameters)
     records.Length |> Should.be 3
 
-    let elrond = records[0]
+    let elrond = List.head records
     elrond.FullName |> Should.be (Some "Elrond")
     elrond.Gender |> Should.be CharacterGender.Elf
 
@@ -67,7 +67,7 @@ type DbConnectionExtensionsTests() =
     let! objects = connection.AsyncQuery<Map<string, objnull>, Map<string, objnull>>(sql, parameters)
     objects.Length |> Should.be 1
 
-    let left, right = objects[0]
+    let left, right = List.head objects
     left["ID"] |> Should.be 6L
     left["firstName"] |> Should.be "Frodo"
     left["lastName"] |> Should.be "Baggins"

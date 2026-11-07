@@ -171,18 +171,42 @@ type CommandBuilder() =
     Command text, ParameterCollection parameter
 
   /// Gets the generated command to insert an entity.
-  // member this.GetInsertCommand(entity: 'T): Command * ParameterCollection =
+  member this.GetInsertCommand(entity: 'T): Command * ParameterCollection =
+    let table = Mapper.Instance.GetTable<'T>()
+    let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
+
+    let fields = table.Columns.Values |> Seq.filter (fun column -> column.CanRead && not column.IsComputed) |> Seq.toArray
+    let text = CommandBuilder.NormalizeCommand $"""
+      INSERT INTO {this.GetTableName table} ({fields |> Seq.map (fun field -> this.QuoteIdentifier field.Name) |> String.concat ", "})
+      VALUES ({fields |> Seq.map (fun field -> if this.UsePositionalParameters then "?" else this.GetParameterName field) |> String.concat ", "})
+      {if this.SupportsReturningClause then $"RETURNING {this.QuoteIdentifier idColumn.Name}" else $"; SELECT {this.LastInsertIdFunction};"}
+      """
+
+    Command text, ParameterCollection(fields
+      |> Seq.indexed
+      |> Seq.map (fun (index, field) -> Parameter(
+        (if this.UsePositionalParameters then $"?{index + 1}" else this.GetParameterName field),
+        this.GetParameterValue(field, entity))))
+
+  /// Gets the generated command to update an entity.
+  // member this.GetUpdateCommand(entity: 'T, [<ParamArray>] columns: string array): Command * ParameterCollection =
   //   let table = Mapper.Instance.GetTable<'T>()
   //   let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
-  //   let fields = table.Columns.Values.Where(column -> column.CanRead && !column.IsComputed).ToArray()
+  //   let fields = (columns.Length = 0 ? table.Columns.Values : table.Columns.Values.Where(column -> columns.Contains(column.Name)))
+  //     .Where(column -> column.CanRead && !column.IsComputed)
+  //     .ToArray()
+
   //   let text = CommandBuilder.NormalizeCommand $"""
-  //     INSERT INTO {this.GetTableName table} ({string.Join(", ", fields.Select(field -> QuoteIdentifier(field.Name)))})
-  //     VALUES ({string.Join(", ", fields.Select(field -> UsePositionalParameters ? "?" : GetParameterName(field)))})
-  //     {(SupportsReturningClause ? $"RETURNING {this.QuoteIdentifier idColumn.Name}" : $"; SELECT {LastInsertIdFunction};")}
+  //     UPDATE {this.GetTableName table}
+  //     SET {string.Join(", ", fields.Select(field -> $"{QuoteIdentifier(field.Name)} = {(UsePositionalParameters ? "?" : GetParameterName(field))}"))}
+  //     WHERE {this.QuoteIdentifier idColumn.Name} = {(UsePositionalParameters ? "?" : GetParameterName(idColumn))}
   //     """
 
-  //   return (text, [.. fields.Select((field, index) -> (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(field, entity)))])
+  //   return (text, [
+  //     .. fields.Select((field, index) -> (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(field, entity))),
+  //     (UsePositionalParameters ? $"?{fields.Length + 1}" : GetParameterName(idColumn), GetParameterValue(idColumn, entity))
+  //   ])
 
   /// Given an unquoted identifier, returns the correct quoted form of that identifier.
   member this.QuoteIdentifier(unquotedIdentifier: string) =

@@ -109,18 +109,18 @@ type CommandBuilderTests() =
   //   Assert.DoesNotContain("lastName", command.Text)
   //   Assert.EndsWith(@"ORDER BY ""ID"" ASC", command.Text)
 
-  // [<TestMethod>]
-  // member _.GetInsertCommand() =
-  //   // It should return the SQL command to insert an entity.
-  //   let command, parameters = CommandBuilder.Create(connection).GetInsertCommand(character)
-  //   Assert.StartsWith(@"INSERT INTO ""main"".""Characters"" (", command.Text)
-  //   Assert.Contains("VALUES (", command.Text)
+  [<TestMethod>]
+  member _.GetInsertCommand() =
+    // It should return the SQL command to insert an entity.
+    let command, parameters = CommandBuilder.Create(connection).GetInsertCommand character
+    command.Text |> Should.startWith @"INSERT INTO ""main"".""Characters"" ("
+    command.Text |> Should.containString "VALUES ("
 
-  //   // It should also return the parameters used by the SQL command.
-  //   Assert.HasCount(3, parameters)
-  //   Assert.AreEqual("Cédric", parameters["firstName"].Value)
-  //   Assert.AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value)
-  //   Assert.AreEqual("", parameters["lastName"].Value)
+    // It should also return the parameters used by the SQL command.
+    parameters.Count |> Should.be 3
+    parameters["firstName"].Value |> Should.be "Cédric"
+    parameters["gender"].Value |> Should.be (nameof CharacterGender.DarkLord)
+    parameters["lastName"].Value |> Should.be ""
 
   // [<TestMethod>]
   // member _.GetUpdateCommand() =
