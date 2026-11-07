@@ -26,7 +26,7 @@ module ObjectFindExtensions =
 
   type DbConnection with
     /// Finds an entity with the specified primary key.
-    member this.FindAsync<'T>(id: obj, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<'T option> = async {
+    member this.AsyncFind<'T>(id: obj, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<'T option> = async {
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetFindCommand<'T>(id, defaultArg columns [||])
       command.Timeout <- defaultArg timeout 30
@@ -35,7 +35,7 @@ module ObjectFindExtensions =
     }
 
     // /// Finds all entities of the specified type.
-    // public async Task<IList<'T>> FindAllAsync<'T>(OrderHintCollection? orderHints = null, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder) = async {
+    // public async Task<IList<'T>> AsyncFindAll<'T>(OrderHintCollection? orderHints = null, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder) = async {
     //   let builder = defaultArg builder (CommandBuilder.Create this)
     //   let command, parameters = builder.GetFindAllCommand<'T>(orderHints ?? [], columns ?? [])
     //   command.Timeout <- defaultArg timeout 30

@@ -9,9 +9,9 @@ module ObjectDeleteExtensions =
 
   type IDbConnection with
     /// Deletes the specified entity.
-    member this.Delete(entity, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): bool =
+    member this.Delete(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): bool =
       let builder = defaultArg builder (CommandBuilder.Create this)
-      let command, parameters = builder.GetDeleteCommand entity
+      let command, parameters = builder.GetDeleteCommand<'T> entity
       command.Timeout <- defaultArg timeout 30
       command.Transaction <- transaction
       this.Execute(command, parameters) > 0
@@ -26,9 +26,9 @@ module ObjectDeleteExtensions =
 
   type DbConnection with
     /// Deletes the specified entity.
-    member this.AsyncDelete(entity, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<bool> = async {
+    member this.AsyncDelete(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<bool> = async {
       let builder = defaultArg builder (CommandBuilder.Create this)
-      let command, parameters = builder.GetDeleteCommand entity
+      let command, parameters = builder.GetDeleteCommand<'T> entity
       command.Timeout <- defaultArg timeout 30
       command.Transaction <- transaction
       let! rowsAffected = this.AsyncExecute(command, parameters)
