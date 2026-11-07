@@ -34,7 +34,7 @@ type QueryFirstExtensionsTests() =
     // It should return the first record produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE fullName = @FullName"
     let parameters = ParameterCollection [Parameter("FullName", "Sauron")]
-    let! record = connection.AsyncQueryFirst<Character>(sql, parameters) |> Async.StartAsTask
+    let! record = connection.AsyncQueryFirst<Character>(sql, parameters)
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
