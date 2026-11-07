@@ -74,13 +74,13 @@ type ColumnInfoTests() =
 
   [<TestMethod>]
   member _.GetValue() =
-    let record = Character(FirstName = "Cédric", LastName = "Belin")
+    let record = { Character.Default with FirstName = "Cédric"; LastName = "Belin" }
     ColumnInfo(nonNull (typeof<Character>.GetProperty "FirstName")).GetValue record |> Should.be "Cédric"
     ColumnInfo(nonNull (typeof<Character>.GetProperty "LastName")).GetValue record |> Should.be "Belin"
 
   [<TestMethod>]
   member _.SetValue() =
-    let record = Character(FirstName = "Cédric", LastName = "Belin")
+    let record = { Character.Default with FirstName = "Cédric"; LastName = "Belin" }
     ColumnInfo(nonNull (typeof<Character>.GetProperty "FirstName")).SetValue(record, "Don")
     ColumnInfo(nonNull (typeof<Character>.GetProperty "LastName")).SetValue(record, "Syme")
     record.FirstName |> Should.be "Don"

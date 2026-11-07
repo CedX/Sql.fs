@@ -14,25 +14,30 @@ type CharacterGender =
   | Istari = 7
 
 /// Represents a fictional character from a well-known saga.
-[<Table("Characters", Schema = "main")>]
-type Character() =
+[<Table("Characters", Schema = "main"); CLIMutable>]
+type Character =
+  {
+    /// The first name.
+    [<Column "firstName">]
+    FirstName: string
 
-  /// The first name.
-  [<Column "firstName">]
-  member val FirstName = "" with get, set
+    /// The full name.
+    [<Column("fullName"); DatabaseGenerated(DatabaseGeneratedOption.Computed)>]
+    FullName: string option
 
-  /// The full name.
-  [<Column("fullName"); DatabaseGenerated(DatabaseGeneratedOption.Computed)>]
-  member val FullName: string option = None with get, set
+    /// The character's gender.
+    [<Column("gender", TypeName = nameof(DbType.AnsiString))>]
+    Gender: CharacterGender
 
-  /// The character's gender.
-  [<Column("gender", TypeName = nameof(DbType.AnsiString))>]
-  member val Gender = CharacterGender.Human with get, set
+    /// The character's identifier.
+    [<Column("ID"); DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
+    Id: int
 
-  /// The character's identifier.
-  [<Column("ID"); DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
-  member val Id = 1 with get, set
+    /// The last name.
+    [<Column "lastName">]
+    LastName: string
+  }
 
-  /// The last name.
-  [<Column "lastName">]
-  member val LastName = "" with get, set
+  /// Creates a new instance with default values.
+  static member Default =
+    { FirstName = ""; FullName = None; Gender = CharacterGender.Human; Id = 0; LastName = "" }

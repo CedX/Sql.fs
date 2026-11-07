@@ -8,7 +8,7 @@ open System.Data.SQLite
 type CommandBuilderTests() =
 
   /// The test data.
-  let character = Character(Id = 1_000, FirstName = "Cédric", Gender = CharacterGender.DarkLord)
+  let character = { Character.Default with Id = 1_000; FirstName = "Cédric"; Gender = CharacterGender.DarkLord }
 
   /// The connection to the data source.
   let mutable connection = Unchecked.defaultof<SQLiteConnection>
@@ -27,7 +27,7 @@ type CommandBuilderTests() =
   [<TestMethod>]
   member _.GetDeleteCommand() =
     // It should return the SQL command to delete an entity.
-    let command, parameters = CommandBuilder.Create(connection).GetDeleteCommand(character)
+    let command, parameters = CommandBuilder.Create(connection).GetDeleteCommand character
     command.Text |> Should.startWith @"DELETE FROM ""main"".""Characters"""
     command.Text |> Should.endWith @"WHERE ""ID"" = @ID"
 
@@ -58,28 +58,28 @@ type CommandBuilderTests() =
     parameter.Name |> Should.be "@ID"
     parameter.Value |> Should.be 1_000
 
-  // [<TestMethod>]
-  // member _.GetFindCommand() =
-  //   let builder = CommandBuilder.Create(connection)
+  [<TestMethod>]
+  member _.GetFindCommand() =
+    let builder = CommandBuilder.Create connection
 
-  //   // It should return the SQL command to find an entity.
-  //   let command, parameters = builder.GetFindCommand<Character>(character.Id)
-  //   Assert.StartsWith(@"SELECT """, command.Text)
-  //   Assert.DoesNotContain("*", command.Text)
-  //   Assert.Contains(@"FROM ""main"".""Characters""", command.Text)
-  //   Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text)
+    // It should return the SQL command to find an entity.
+    let command, parameters = builder.GetFindCommand<Character> character.Id
+    command.Text |> Should.startWith @"SELECT """
+    command.Text |> Should.notContainString "*"
+    command.Text |> Should.containString @"FROM ""main"".""Characters"""
+    command.Text |> Should.endWith @"WHERE ""ID"" = @ID"
 
-  //   // It should also return the parameters used by the SQL command.
-  //   let parameter = parameters.Single()
-  //   Assert.AreEqual("@ID", parameter.Name)
-  //   Assert.AreEqual(1_000, parameter.Value)
+    // It should also return the parameters used by the SQL command.
+    let parameter = Seq.exactlyOne parameters
+    parameter.Name |> Should.be "@ID"
+    parameter.Value |> Should.be 1_000
 
-  //   // It should allow selecting a specific set of columns.
-  //   (command, _) = builder.GetFindCommand<Character>(character.Id, ["firstName"])
-  //   Assert.StartsWith(@"SELECT ""firstName""", command.Text)
-  //   Assert.DoesNotContain("gender", command.Text)
-  //   Assert.DoesNotContain("lastName", command.Text)
-  //   Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text)
+    // It should allow selecting a specific set of columns.
+    let command, _ = builder.GetFindCommand<Character>(character.Id, "firstName")
+    command.Text |> Should.startWith @"SELECT ""firstName"""
+    command.Text |> Should.notContainString "gender"
+    command.Text |> Should.notContainString "lastName"
+    command.Text |> Should.endWith @"WHERE ""ID"" = @ID"
 
   // [<TestMethod>]
   // member _.GetFindAllCommand() =
@@ -96,14 +96,14 @@ type CommandBuilderTests() =
   //   Should.beEmpty parameters
 
   //   // It should allow sorting the results by a specific set of columns.
-  //   (command, _) = builder.GetFindAllCommand<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)])
+  //   let command, _ = builder.GetFindAllCommand<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)])
   //   Assert.StartsWith(@"SELECT """, command.Text)
   //   Assert.DoesNotContain("*", command.Text)
   //   Assert.Contains(@"FROM ""main"".""Characters""", command.Text)
   //   Assert.EndsWith(@"ORDER BY ""gender"" ASC, ""fullName"" DESC", command.Text)
 
   //   // It should allow selecting a specific set of columns.
-  //   (command, _) = builder.GetFindAllCommand<Character>(columns: ["firstName"])
+  //   let command, _ = builder.GetFindAllCommand<Character>(columns: ["firstName"])
   //   Assert.StartsWith(@"SELECT ""firstName""", command.Text)
   //   Assert.DoesNotContain("gender", command.Text)
   //   Assert.DoesNotContain("lastName", command.Text)

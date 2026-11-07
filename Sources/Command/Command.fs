@@ -149,6 +149,41 @@ type CommandBuilder() =
 
     Command text, ParameterCollection parameter
 
+  /// Gets the generated command to find an entity.
+  member this.GetFindCommand<'T>(id: obj, [<ParamArray>] columns: string array): Command * ParameterCollection =
+    let table = Mapper.Instance.GetTable<'T>()
+    let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
+
+    let fields = ResizeArray(
+      if columns.Length = 0 then table.Columns.Values else table.Columns.Values |> Seq.filter (fun column -> columns |> Array.contains column.Name)
+      |> Seq.filter (fun column -> column.CanWrite)
+      |> Seq.map (fun column -> column.Name))
+
+    if not (fields.Contains idColumn.Name) then fields.Add idColumn.Name
+
+    let parameter = Parameter((if this.UsePositionalParameters then "?1" else this.GetParameterName idColumn), id)
+    let text = CommandBuilder.NormalizeCommand $"""
+      SELECT {fields |> Seq.map this.QuoteIdentifier |> String.concat ", "}
+      FROM {this.GetTableName table}
+      WHERE {this.QuoteIdentifier idColumn.Name} = {if this.UsePositionalParameters then "?" else parameter.Name}
+      """
+
+    Command text, ParameterCollection parameter
+
+  /// Gets the generated command to insert an entity.
+  // member this.GetInsertCommand(entity: 'T): Command * ParameterCollection =
+  //   let table = Mapper.Instance.GetTable<'T>()
+  //   let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
+
+  //   let fields = table.Columns.Values.Where(column -> column.CanRead && !column.IsComputed).ToArray()
+  //   let text = CommandBuilder.NormalizeCommand $"""
+  //     INSERT INTO {this.GetTableName table} ({string.Join(", ", fields.Select(field -> QuoteIdentifier(field.Name)))})
+  //     VALUES ({string.Join(", ", fields.Select(field -> UsePositionalParameters ? "?" : GetParameterName(field)))})
+  //     {(SupportsReturningClause ? $"RETURNING {this.QuoteIdentifier idColumn.Name}" : $"; SELECT {LastInsertIdFunction};")}
+  //     """
+
+  //   return (text, [.. fields.Select((field, index) -> (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(field, entity)))])
+
   /// Given an unquoted identifier, returns the correct quoted form of that identifier.
   member this.QuoteIdentifier(unquotedIdentifier: string) =
     $"{this.QuotePrefix}{unquotedIdentifier.Replace(this.QuoteSuffix, this.QuoteSuffix + this.QuoteSuffix)}{this.QuoteSuffix}"

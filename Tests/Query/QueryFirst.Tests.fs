@@ -18,9 +18,13 @@ type QueryFirstExtensionsTests() =
     // It should return the first record produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE fullName = @FullName"
     let parameters = ParameterCollection (Parameter("FullName", "Sauron"))
-    let record = connection.QueryFirst<Character>(sql, parameters) |> Option.get
-    record.FirstName |> Should.be "Sauron"
-    record.Gender |> Should.be CharacterGender.DarkLord
+    let record = connection.QueryFirst<Character>(sql, parameters)
+
+    match record with
+    | None -> Should.beFalse record.IsNone
+    | Some character ->
+      character.FirstName |> Should.be "Sauron"
+      character.Gender |> Should.be CharacterGender.DarkLord
 
     // It should return `None` if the query produces no results.
     let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
@@ -33,9 +37,11 @@ type QueryFirstExtensionsTests() =
     let parameters = ParameterCollection (Parameter("FullName", "Sauron"))
     let! record = connection.AsyncQueryFirst<Character>(sql, parameters)
 
-    let character = Option.get record
-    character.FirstName |> Should.be "Sauron"
-    character.Gender |> Should.be CharacterGender.DarkLord
+    match record with
+    | None -> Should.beFalse record.IsNone
+    | Some character ->
+      character.FirstName |> Should.be "Sauron"
+      character.Gender |> Should.be CharacterGender.DarkLord
 
     // It should return `None` if the query produces no results.
     let parameters = ParameterCollection (Parameter("FullName", "Cédric"))

@@ -18,9 +18,13 @@ type QuerySingleExtensionsTests() =
     // It should return the single record produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE fullName = @FullName"
     let parameters = ParameterCollection (Parameter("FullName", "Saruman"))
-    let record = connection.QuerySingle<Character>(sql, parameters) |> Option.get
-    record.FirstName |> Should.be "Saruman"
-    record.Gender |> Should.be CharacterGender.Istari
+    let record = connection.QuerySingle<Character>(sql, parameters)
+
+    match record with
+    | None -> Should.beFalse record.IsNone
+    | Some character ->
+      character.FirstName |> Should.be "Saruman"
+      character.Gender |> Should.be CharacterGender.Istari
 
     // It should return `None` if the query produces no results.
     let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
@@ -38,9 +42,11 @@ type QuerySingleExtensionsTests() =
     let parameters = ParameterCollection (Parameter("FullName", "Saruman"))
     let! record = connection.AsyncQuerySingle<Character>(sql, parameters)
 
-    let character = Option.get record
-    character.FirstName |> Should.be "Saruman"
-    character.Gender |> Should.be CharacterGender.Istari
+    match record with
+    | None -> Should.beFalse record.IsNone
+    | Some character ->
+      character.FirstName |> Should.be "Saruman"
+      character.Gender |> Should.be CharacterGender.Istari
 
     // It should return `None` if the query produces no results.
     let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
