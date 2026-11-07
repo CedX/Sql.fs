@@ -6,7 +6,7 @@ open System.Threading.Tasks
 
 /// Tests the features of the `QueryExecuteExtensions` module.
 [<TestClass>]
-type QueryExecuteExtensionsTests(testContext: TestContext) =
+type QueryExecuteExtensionsTests() =
 
   /// The connection to the data source.
   let mutable connection = Unchecked.defaultof<DbConnection>
@@ -27,11 +27,11 @@ type QueryExecuteExtensionsTests(testContext: TestContext) =
   [<TestMethod>]
   member _.AsyncExecute(): Task = task {
     let parameters = ParameterCollection[Parameter("Gender", nameof CharacterGender.Balrog)]
-    do! connection.AsyncExecuteScalar<int>("SELECT COUNT(*) FROM Characters", cancellationToken = testContext.CancellationToken) |> ShouldAsync.be 16
-    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters, testContext.CancellationToken) |> ShouldAsync.be 2
-    do! connection.AsyncExecuteScalar<int>("SELECT COUNT(*) FROM Characters", cancellationToken = testContext.CancellationToken) |> ShouldAsync.be 14
+    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> ShouldAsync.be 16
+    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> ShouldAsync.be 2
+    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> ShouldAsync.be 14
 
     let parameters = ParameterCollection[Parameter("Gender", nameof CharacterGender.Elf)]
-    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters, testContext.CancellationToken) |> ShouldAsync.be 3
-    do! connection.AsyncExecuteScalar<int>("SELECT COUNT(*) FROM Characters", cancellationToken = testContext.CancellationToken) |> ShouldAsync.be 11
+    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> ShouldAsync.be 3
+    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> ShouldAsync.be 11
   }

@@ -2,7 +2,6 @@ namespace Belin.Sql
 
 open System.Data
 open System.Data.Common
-open System.Threading
 
 /// Provides extension members for database connections.
 [<AutoOpen>]
@@ -21,15 +20,13 @@ module QueryExecuteExtensions =
 
   type DbConnection with
     /// Executes a parameterized SQL statement.
-    member this.AsyncExecute(command: Command, ?parameters: ParameterCollection, ?cancellationToken: CancellationToken): Async<int> = async {
-      let! ambientToken = Async.CancellationToken
-      let token = defaultArg cancellationToken ambientToken
-
-      if this.State = ConnectionState.Closed then do! this.OpenAsync token |> Async.AwaitTask
+    member this.AsyncExecute(command: Command, ?parameters: ParameterCollection): Async<int> = async {
+      let! cancellationToken = Async.CancellationToken
+      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
-      return! dbCommand.ExecuteNonQueryAsync token |> Async.AwaitTask
+      return! dbCommand.ExecuteNonQueryAsync cancellationToken |> Async.AwaitTask
     }
 
     /// Executes a parameterized SQL statement.
-    member this.AsyncExecute(command: string, ?parameters: ParameterCollection, ?cancellationToken: CancellationToken): Async<int> =
-      this.AsyncExecute(Command command, ?parameters = parameters, ?cancellationToken = cancellationToken)
+    member this.AsyncExecute(command: string, ?parameters: ParameterCollection): Async<int> =
+      this.AsyncExecute(Command command, ?parameters = parameters)

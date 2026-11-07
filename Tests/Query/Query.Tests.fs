@@ -6,7 +6,7 @@ open System.Threading.Tasks
 
 /// Tests the features of the `DbConnectionExtensions` module.
 [<TestClass>]
-type DbConnectionExtensionsTests(testContext: TestContext) =
+type DbConnectionExtensionsTests() =
 
   /// The connection to the data source.
   let mutable connection = Unchecked.defaultof<DbConnection>
@@ -22,11 +22,11 @@ type DbConnectionExtensionsTests(testContext: TestContext) =
     records.Length |> Should.be 3
 
     let elrond = records[0]
-    elrond.FullName |> Should.beSome "Elrond"
+    elrond.FullName |> Should.be (Some "Elrond")
     elrond.Gender |> Should.be CharacterGender.Elf
 
     let galadriel = records[1]
-    galadriel.FullName |> Should.beSome "Galadriel"
+    galadriel.FullName |> Should.be (Some "Galadriel")
     galadriel.Gender |> Should.be CharacterGender.Elf
 
     // It should allow the data rows to be split into distinct objects.
@@ -50,21 +50,21 @@ type DbConnectionExtensionsTests(testContext: TestContext) =
     // It should return the records produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName"
     let parameters = ParameterCollection [Parameter("Gender", nameof CharacterGender.Elf)]
-    let! records = connection.AsyncQuery<Character>(sql, parameters, testContext.CancellationToken)
+    let! records = connection.AsyncQuery<Character>(sql, parameters)
     records.Length |> Should.be 3
 
     let elrond = records[0]
-    elrond.FullName |> Should.beSome "Elrond"
+    elrond.FullName |> Should.be (Some "Elrond")
     elrond.Gender |> Should.be CharacterGender.Elf
 
     let galadriel = records[1]
-    galadriel.FullName |> Should.beSome "Galadriel"
+    galadriel.FullName |> Should.be (Some "Galadriel")
     galadriel.Gender |> Should.be CharacterGender.Elf
 
     // It should allow the data rows to be split into distinct objects.
     let sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName"
     let parameters = ParameterCollection [Parameter("FirstName", "Frodo")]
-    let! objects = connection.AsyncQuery<Map<string, objnull>, Map<string, objnull>>(sql, parameters, cancellationToken = testContext.CancellationToken)
+    let! objects = connection.AsyncQuery<Map<string, objnull>, Map<string, objnull>>(sql, parameters)
     objects.Length |> Should.be 1
 
     let left, right = objects[0]

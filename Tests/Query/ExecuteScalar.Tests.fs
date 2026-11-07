@@ -6,7 +6,7 @@ open System.Threading.Tasks
 
 /// Tests the features of the `QueryExecuteScalarExtensions` module.
 [<TestClass>]
-type QueryExecuteScalarExtensionsTests(testContext: TestContext) =
+type QueryExecuteScalarExtensionsTests() =
 
   /// The connection to the data source.
   let mutable connection = Unchecked.defaultof<DbConnection>
@@ -31,13 +31,13 @@ type QueryExecuteScalarExtensionsTests(testContext: TestContext) =
   member _.AsyncExecuteScalar(): Task = task {
     let sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender"
     let parameters = ParameterCollection [Parameter("Gender", nameof CharacterGender.Balrog)]
-    do! connection.AsyncExecuteScalar<int>(sql, parameters, testContext.CancellationToken) |> ShouldAsync.be 2
+    do! connection.AsyncExecuteScalar<int>(sql, parameters) |> ShouldAsync.be 2
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name"
     let parameters = ParameterCollection [Parameter("Name", "Characters"); Parameter("Type", "table")]
-    do! connection.AsyncExecuteScalar<string>(sql, parameters, testContext.CancellationToken) |> ShouldAsync.be "Characters"
+    do! connection.AsyncExecuteScalar<string>(sql, parameters) |> ShouldAsync.be "Characters"
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name"
     let parameters = ParameterCollection [Parameter("Name", "FooBarBazQux")]
-    do! connection.AsyncExecuteScalar<string | null>(sql, parameters, testContext.CancellationToken) |> ShouldAsync.beNull
+    do! connection.AsyncExecuteScalar<string | null>(sql, parameters) |> ShouldAsync.beNull
   }

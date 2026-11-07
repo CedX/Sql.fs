@@ -47,7 +47,7 @@ type ParameterCollectionTests() =
     let parameter = Seq.head collection
     parameter.Name |> Should.be "?1"
     parameter.Value |> Should.be 123
-    parameter.DbType |> Should.beSome DbType.Int64
+    parameter.DbType |> Should.be (Some DbType.Int64)
 
     // It should create a collection from a list of parameters.
     let collection = ParameterCollection(Parameter("?1", 123), Parameter("@Key", "Unique", DbType = Some DbType.AnsiString))
@@ -56,7 +56,7 @@ type ParameterCollectionTests() =
     let parameter = Seq.last collection
     parameter.Name |> Should.be "@Key"
     parameter.Value |> Should.be "Unique"
-    parameter.DbType |> Should.beSome DbType.AnsiString
+    parameter.DbType |> Should.be (Some DbType.AnsiString)
 
   [<TestMethod>]
   member _.Indexer() =
