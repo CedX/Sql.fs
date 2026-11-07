@@ -24,6 +24,22 @@ module internal Should =
   let beFalse (condition: bool) =
     Assert.IsFalse condition
 
+  /// Tests whether the given value is greater than the specified lower bound.
+  let beGreaterThan (lowerBound: 'T) (value: 'T) =
+    Assert.IsGreaterThan(lowerBound, value)
+
+  /// Tests whether the given value is greater than or equal to the specified lower bound.
+  let beGreaterThanOrEqualTo (lowerBound: 'T) (value: 'T) =
+    Assert.IsGreaterThanOrEqualTo(lowerBound, value)
+
+  /// Tests whether the given value is less than the specified upper bound.
+  let beLessThan (upperBound: 'T) (value: 'T) =
+    Assert.IsLessThan(upperBound, value)
+
+  /// Tests whether the given value is less than or equal to the specified upper bound.
+  let beLessThanOrEqualTo (upperBound: 'T) (value: 'T) =
+    Assert.IsLessThanOrEqualTo(upperBound, value)
+
   /// Tests whether the specified object is `null`.
   let beNull (value: 'T) =
     Assert.IsNull value
@@ -110,6 +126,30 @@ module internal ShouldAsync =
   let beFalse (condition: Async<bool>) = task {
     let! condition = condition
     return Should.beFalse condition
+  }
+
+  /// Tests whether the given value is greater than the specified lower bound.
+  let beGreaterThan (lowerBound: 'T) (value: Async<'T>) = task {
+    let! value = value
+    return value |> Should.beGreaterThan lowerBound
+  }
+
+  /// Tests whether the given value is greater than or equal to the specified lower bound.
+  let beGreaterThanOrEqualTo (lowerBound: 'T) (value: Async<'T>) = task {
+    let! value = value
+    return value |> Should.beGreaterThanOrEqualTo lowerBound
+  }
+
+  /// Tests whether the given value is less than the specified upper bound.
+  let beLessThan (upperBound: 'T) (value: Async<'T>) = task {
+    let! value = value
+    return value |> Should.beLessThan upperBound
+  }
+
+  /// Tests whether the given value is less than or equal to the specified upper bound.
+  let beLessThanOrEqualTo (upperBound: 'T) (value: Async<'T>) = task {
+    let! value = value
+    return value |> Should.beLessThanOrEqualTo upperBound
   }
 
   /// Tests whether the specified object is `null`.
