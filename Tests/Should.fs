@@ -84,6 +84,14 @@ module internal Should =
   let notBeNull (value: 'T) =
     Assert.IsNotNull value
 
+  /// Tests whether the specified collection does not contain the given element.
+  let notContain (expected: 'T) (collection: 'T seq) =
+    Assert.DoesNotContain<'T>(expected, collection)
+
+  /// Tests whether the specified string does not contain the given substring.
+  let notContainString (substring: string) (value: string) =
+    Assert.DoesNotContain(substring, value)
+
   /// Tests whether the specified string does not match the given regular expression.
   let notMatchRegex (pattern: Regex) (value: string) =
     Assert.DoesNotMatchRegex(pattern, value)
@@ -224,6 +232,18 @@ module internal ShouldAsync =
   let notBeNull (value: Async<'T>) = task {
     let! value = value
     return Should.notBeNull value
+  }
+
+  /// Tests whether the specified collection does not contain the given element.
+  let notContain (expected: 'T) (collection: Async<'T seq>) = task {
+    let! collection = collection
+    return collection |> Should.notContain expected
+  }
+
+  /// Tests whether the specified string does not contain the given substring.
+  let notContainString (substring: string) (value: Async<string>) = task {
+    let! value = value
+    return value |> Should.notContainString substring
   }
 
   /// Tests whether the specified string does not match the given regular expression.
