@@ -3,6 +3,7 @@ namespace Belin.Sql
 open System
 open System.Data
 open System.Data.Common
+open System.Text.RegularExpressions
 
 /// Represents an SQL statement that is executed while connected to a data source.
 type Command(text: string) =
@@ -34,6 +35,9 @@ type CommandBuilder() =
 
   /// The list of data types corresponding to a string.
   static let stringTypes = [| DbType.AnsiString; DbType.AnsiStringFixedLength; DbType.String; DbType.StringFixedLength |]
+
+  /// The regular expression used to normalize the queries.
+  static let whiteSpacePattern = Regex @"\s+"
 
   /// The position of the catalog name in a qualified table name.
   member val CatalogLocation = CatalogLocation.Start with get, set
@@ -106,25 +110,57 @@ type CommandBuilder() =
     let tableName = Mapper.Instance.GetTable<'T>() |> this.GetTableName
     Command $"SELECT COUNT(*) FROM {tableName}", ParameterCollection()
 
+  /// Gets the generated command to delete an entity.
+  member this.GetDeleteCommand(entity: 'T): Command * ParameterCollection =
+    let table = Mapper.Instance.GetTable<'T>()
+    let idColumn =
+      match table.IdentityColumn with
+      | None -> invalidOp "The identity column could not be found."
+      | Some column -> column
+
+    let parameter = Parameter(
+      (if this.UsePositionalParameters then "?1" else this.GetParameterName idColumn),
+      this.GetParameterValue(idColumn, entity))
+
+    let text = CommandBuilder.NormalizeCommand $"""
+      DELETE FROM {this.GetTableName table}
+      WHERE {this.QuoteIdentifier idColumn.Name} = {if this.UsePositionalParameters then "?" else parameter.Name}
+      """
+
+    Command text, ParameterCollection parameter
+
+  /// Gets the generated command to delete all entities.
+  member this.GetDeleteAllCommand<'T>(?truncate: bool): Command * ParameterCollection =
+    let tableName = this.GetTableName(Mapper.Instance.GetTable<'T>())
+    let text =
+      if defaultArg truncate false && this.SupportsTruncateTable then $"TRUNCATE TABLE {tableName}"
+      else $"DELETE FROM {tableName}"
+
+    Command text, ParameterCollection()
+
+  /// Given an unquoted identifier, returns the correct quoted form of that identifier.
+  member this.QuoteIdentifier(unquotedIdentifier: string) =
+    $"{this.QuotePrefix}{unquotedIdentifier.Replace(this.QuoteSuffix, this.QuoteSuffix + this.QuoteSuffix)}{this.QuoteSuffix}"
+
+  /// Given a quoted identifier, returns the correct unquoted form of that identifier.
+  member this.UnquoteIdentifier(quotedIdentifier: string) =
+    let mutable id = quotedIdentifier
+    if id.StartsWith(this.QuotePrefix, StringComparison.Ordinal) then id <- id[this.QuotePrefix.Length..]
+    if id.EndsWith(this.QuoteSuffix, StringComparison.Ordinal) then id <- id.Substring(0, id.Length - this.QuoteSuffix.Length)
+    id.Replace(this.QuoteSuffix + this.QuoteSuffix, this.QuoteSuffix)
+
+  /// Normalizes the specified command text.
+  static member internal NormalizeCommand(text: string) =
+    whiteSpacePattern.Replace(text, " ").Trim()
+
   /// Returns the parameter name corresponding to the specified column.
   member private this.GetParameterName(column: ColumnInfo): string =
     $"{this.ParameterPrefix}{column.Name}"
 
   /// Returns the parameter value corresponding to the specified column.
-  member private this.GetParameterValue(column: ColumnInfo, entity: obj): objnull =
+  member private _.GetParameterValue(column: ColumnInfo, entity: obj): objnull =
     let value = column.GetValue entity
-    // TODO if column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) then value?.ToString() else value
-    value
-
-  /// Given an unquoted identifier, returns the correct quoted form of that identifier.
-  member private this.QuoteIdentifier(unquotedIdentifier: string) =
-    $"{this.QuotePrefix}{unquotedIdentifier.Replace(this.QuoteSuffix, this.QuoteSuffix + this.QuoteSuffix)}{this.QuoteSuffix}"
-
-  /// Given a quoted identifier, returns the correct unquoted form of that identifier.
-  member private this.UnquoteIdentifier(quotedIdentifier: string) =
-    // TODO if quotedIdentifier.StartsWith(this.QuotePrefix, StringComparison.Ordinal) then quotedIdentifier = quotedIdentifier[this.QuotePrefix.Length..]
-    // TODO if quotedIdentifier.EndsWith(this.QuoteSuffix, StringComparison.Ordinal) then quotedIdentifier = quotedIdentifier[..^QuoteSuffix.Length]
-    quotedIdentifier.Replace(this.QuoteSuffix + this.QuoteSuffix, this.QuoteSuffix)
+    if column.PropertyType.IsEnum && stringTypes |> Array.contains column.DbType then string value else value
 
   /// Returns the fully qualified name corresponding to the specified table.
   member private this.GetTableName(table: TableInfo): string =

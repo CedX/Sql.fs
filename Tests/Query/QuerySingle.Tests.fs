@@ -17,41 +17,37 @@ type QuerySingleExtensionsTests() =
   member _.QuerySingle() =
     // It should return the single record produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE fullName = @FullName"
-    let parameters = ParameterCollection [Parameter("FullName", "Saruman")]
-    let record = connection.QuerySingle<Character>(sql, parameters)
-    match record with
-    | None -> Should.beFalse record.IsNone
-    | Some character ->
-      character.FirstName |> Should.be "Saruman"
-      character.Gender |> Should.be CharacterGender.Istari
+    let parameters = ParameterCollection (Parameter("FullName", "Saruman"))
+    let record = connection.QuerySingle<Character>(sql, parameters) |> Option.get
+    record.FirstName |> Should.be "Saruman"
+    record.Gender |> Should.be CharacterGender.Istari
 
     // It should return `None` if the query produces no results.
-    let parameters = ParameterCollection [Parameter("FullName", "Cédric")]
+    let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
     connection.QuerySingle<Character>(sql, parameters) |> Should.be None
 
     // It should return `None` if the query produces more than one result.
     let sql = "SELECT * FROM Characters WHERE gender = @Gender"
-    let parameters = ParameterCollection [Parameter("Gender", CharacterGender.Human)]
+    let parameters = ParameterCollection (Parameter("Gender", CharacterGender.Human))
     connection.QuerySingle<Character>(sql, parameters) |> Should.be None
 
   [<TestMethod>]
   member _.AsyncQuerySingle(): Task = task {
     // It should return the single record produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE fullName = @FullName"
-    let parameters = ParameterCollection [Parameter("FullName", "Saruman")]
+    let parameters = ParameterCollection (Parameter("FullName", "Saruman"))
     let! record = connection.AsyncQuerySingle<Character>(sql, parameters)
-    match record with
-    | None -> Should.beFalse record.IsNone
-    | Some character ->
-      character.FirstName |> Should.be "Saruman"
-      character.Gender |> Should.be CharacterGender.Istari
+
+    let character = Option.get record
+    character.FirstName |> Should.be "Saruman"
+    character.Gender |> Should.be CharacterGender.Istari
 
     // It should return `None` if the query produces no results.
-    let parameters = ParameterCollection [Parameter("FullName", "Cédric")]
+    let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
     do! connection.AsyncQuerySingle<Character>(sql, parameters) |> ShouldAsync.be None
 
     // It should return `None` if the query produces more than one result.
     let sql = "SELECT * FROM Characters WHERE gender = @Gender"
-    let parameters = ParameterCollection [Parameter("Gender", CharacterGender.Human)]
+    let parameters = ParameterCollection (Parameter("Gender", CharacterGender.Human))
     do! connection.AsyncQuerySingle<Character>(sql, parameters) |> ShouldAsync.be None
   }

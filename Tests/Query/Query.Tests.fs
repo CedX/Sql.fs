@@ -17,7 +17,7 @@ type DbConnectionExtensionsTests() =
   member _.Query() =
     // It should return the records produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName"
-    let parameters = ParameterCollection [Parameter("Gender", nameof CharacterGender.Elf)]
+    let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Elf))
     let records = connection.Query<Character>(sql, parameters)
     records.Length |> Should.be 3
 
@@ -31,7 +31,7 @@ type DbConnectionExtensionsTests() =
 
     // It should allow the data rows to be split into distinct objects.
     let sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName"
-    let parameters = ParameterCollection [Parameter("FirstName", "Frodo")]
+    let parameters = ParameterCollection (Parameter("FirstName", "Frodo"))
     let objects = connection.Query<Map<string, objnull>, Map<string, objnull>>(sql, parameters)
     objects.Length |> Should.be 1
 
@@ -49,7 +49,7 @@ type DbConnectionExtensionsTests() =
   member _.AsyncQuery(): Task = task {
     // It should return the records produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName"
-    let parameters = ParameterCollection [Parameter("Gender", nameof CharacterGender.Elf)]
+    let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Elf))
     let! records = connection.AsyncQuery<Character>(sql, parameters)
     records.Length |> Should.be 3
 
@@ -63,7 +63,7 @@ type DbConnectionExtensionsTests() =
 
     // It should allow the data rows to be split into distinct objects.
     let sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName"
-    let parameters = ParameterCollection [Parameter("FirstName", "Frodo")]
+    let parameters = ParameterCollection (Parameter("FirstName", "Frodo"))
     let! objects = connection.AsyncQuery<Map<string, objnull>, Map<string, objnull>>(sql, parameters)
     objects.Length |> Should.be 1
 
