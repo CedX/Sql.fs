@@ -60,6 +60,14 @@ module internal Should =
   let beTrue (condition: bool) =
     Assert.IsTrue condition
 
+  /// Tests whether the specified collection contains the given element.
+  let contain (expected: 'T) (collection: 'T seq) =
+    Assert.Contains<'T>(expected, collection)
+
+  /// Tests whether the specified string contains the given substring.
+  let containString (substring: string) (value: string) =
+    Assert.Contains(substring, value)
+
   /// Tests whether the specified string ends with the given suffix.
   let endWith (expectedSuffix: string) (value: string) =
     Assert.EndsWith(expectedSuffix, value)
@@ -180,6 +188,18 @@ module internal ShouldAsync =
   let beTrue (condition: Async<bool>) = task {
     let! condition = condition
     return Should.beTrue condition
+  }
+
+  /// Tests whether the specified collection contains the given element.
+  let contain (expected: 'T) (collection: Async<'T seq>) = task {
+    let! collection = collection
+    return collection |> Should.contain expected
+  }
+
+  /// Tests whether the specified string contains the given substring.
+  let containString (substring: string) (value: Async<string>) = task {
+    let! value = value
+    return value |> Should.containString substring
   }
 
   /// Tests whether the specified string ends with the given suffix.

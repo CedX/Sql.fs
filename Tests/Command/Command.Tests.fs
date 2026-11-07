@@ -45,18 +45,18 @@ type CommandBuilderTests() =
     // It should also return an empty parameter collection.
     Should.beEmpty parameters
 
-  // [<TestMethod>]
-  // member _.GetExistsCommand() =
-  //   // It should return the SQL command to check the existence of an entity.
-  //   let command, parameters = CommandBuilder.Create(connection).GetExistsCommand<Character>(character.Id)
-  //   Assert.StartsWith("SELECT 1", command.Text)
-  //   Assert.Contains(@"FROM ""main"".""Characters""", command.Text)
-  //   Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text)
+  [<TestMethod>]
+  member _.GetExistsCommand() =
+    // It should return the SQL command to check the existence of an entity.
+    let command, parameters = CommandBuilder.Create(connection).GetExistsCommand<Character> character.Id
+    command.Text |> Should.startWith "SELECT 1"
+    command.Text |> Should.containString @"FROM ""main"".""Characters"""
+    command.Text |> Should.endWith @"WHERE ""ID"" = @ID"
 
-  //   // It should also return the parameters used by the SQL command.
-  //   let parameter = parameters.Single()
-  //   Assert.AreEqual("@ID", parameter.Name)
-  //   Assert.AreEqual(1_000, parameter.Value)
+    // It should also return the parameters used by the SQL command.
+    let parameter = Seq.exactlyOne parameters
+    parameter.Name |> Should.be "@ID"
+    parameter.Value |> Should.be 1_000
 
   // [<TestMethod>]
   // member _.GetFindCommand() =

@@ -17,7 +17,7 @@ module ObjectDeleteExtensions =
       this.Execute(command, parameters) > 0
 
     /// Deletes all entities.
-    member this.DeleteAll<'T>(?truncate: bool, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder) =
+    member this.DeleteAll<'T>(?truncate: bool, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): unit =
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetDeleteAllCommand<'T>(?truncate = truncate)
       command.Timeout <- defaultArg timeout 30

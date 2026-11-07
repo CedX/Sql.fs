@@ -113,10 +113,7 @@ type CommandBuilder() =
   /// Gets the generated command to delete an entity.
   member this.GetDeleteCommand(entity: 'T): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
-    let idColumn =
-      match table.IdentityColumn with
-      | None -> invalidOp "The identity column could not be found."
-      | Some column -> column
+    let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
     let parameter = Parameter(
       (if this.UsePositionalParameters then "?1" else this.GetParameterName idColumn),
@@ -137,6 +134,20 @@ type CommandBuilder() =
       else $"DELETE FROM {tableName}"
 
     Command text, ParameterCollection()
+
+  /// Gets the generated command to check the existence of an entity.
+  member this.GetExistsCommand<'T>(id: obj): Command * ParameterCollection =
+    let table = Mapper.Instance.GetTable<'T>()
+    let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
+
+    let parameter = Parameter((if this.UsePositionalParameters then "?1" else this.GetParameterName idColumn), id)
+    let text = CommandBuilder.NormalizeCommand $"""
+      SELECT 1
+      FROM {this.GetTableName table}
+      WHERE {this.QuoteIdentifier idColumn.Name} = {if this.UsePositionalParameters then "?" else parameter.Name}
+      """
+
+    Command text, ParameterCollection parameter
 
   /// Given an unquoted identifier, returns the correct quoted form of that identifier.
   member this.QuoteIdentifier(unquotedIdentifier: string) =
