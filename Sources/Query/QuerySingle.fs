@@ -22,6 +22,10 @@ module QuerySingleExtensions =
 
       if rowCount = 1 then record else None
 
+    /// Executes a parameterized SQL query and returns the single row.
+    member this.QuerySingle(command: string, ?parameters: ParameterCollection): 'T option =
+      this.QuerySingle(Command command, ?parameters = parameters)
+
   type DbConnection with
     /// Executes a parameterized SQL query and returns the single row.
     member this.AsyncQuerySingle(command: Command, ?parameters: ParameterCollection): Async<'T option> = async {
@@ -35,9 +39,14 @@ module QuerySingleExtensions =
       let mutable rowCount = 0
       while loop && rowCount <= 2 do
         let! ok = reader.ReadAsync cancellationToken |> Async.AwaitTask
-        if ok && rowCount = 0 then record <- Some (Mapper.Instance.CreateInstance<'T> reader)
         loop <- ok
-        rowCount <- rowCount + 1
+        if ok then
+          if rowCount = 0 then record <- Some (Mapper.Instance.CreateInstance<'T> reader)
+          rowCount <- rowCount + 1
 
       return if rowCount = 1 then record else None
     }
+
+    /// Executes a parameterized SQL query and returns the single row.
+    member this.AsyncQuerySingle(command: string, ?parameters: ParameterCollection): Async<'T option> =
+      this.AsyncQuerySingle(Command command, ?parameters = parameters)
