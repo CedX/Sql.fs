@@ -20,7 +20,7 @@ type QuerySingleExtensionsTests() =
     let parameters = ParameterCollection [Parameter("FullName", "Saruman")]
     let record = connection.QuerySingle<Character>(sql, parameters)
     match record with
-    | None -> record.IsNone |> Should.beFalse
+    | None -> Should.beFalse record.IsNone
     | Some character ->
       character.FirstName |> Should.be "Saruman"
       character.Gender |> Should.be CharacterGender.Istari
@@ -41,7 +41,7 @@ type QuerySingleExtensionsTests() =
     let parameters = ParameterCollection [Parameter("FullName", "Saruman")]
     let! record = connection.AsyncQuerySingle<Character>(sql, parameters)
     match record with
-    | None -> record.IsNone |> Should.beFalse
+    | None -> Should.beFalse record.IsNone
     | Some character ->
       character.FirstName |> Should.be "Saruman"
       character.Gender |> Should.be CharacterGender.Istari

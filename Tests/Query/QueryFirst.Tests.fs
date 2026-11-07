@@ -20,7 +20,7 @@ type QueryFirstExtensionsTests() =
     let parameters = ParameterCollection [Parameter("FullName", "Sauron")]
     let record = connection.QueryFirst<Character>(sql, parameters)
     match record with
-    | None -> record.IsNone |> Should.beFalse
+    | None -> Should.beFalse record.IsNone
     | Some character ->
       character.FirstName |> Should.be "Sauron"
       character.Gender |> Should.be CharacterGender.DarkLord
@@ -36,7 +36,7 @@ type QueryFirstExtensionsTests() =
     let parameters = ParameterCollection [Parameter("FullName", "Sauron")]
     let! record = connection.AsyncQueryFirst<Character>(sql, parameters) |> Async.StartAsTask
     match record with
-    | None -> record.IsNone |> Should.beFalse
+    | None -> Should.beFalse record.IsNone
     | Some character ->
       character.FirstName |> Should.be "Sauron"
       character.Gender |> Should.be CharacterGender.DarkLord
