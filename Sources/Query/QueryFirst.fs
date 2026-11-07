@@ -17,7 +17,7 @@ module QueryFirstExtensions =
 
     /// Executes a parameterized SQL query and returns the first row.
     member this.QueryFirst(command: string, ?parameters: ParameterCollection): 'T option =
-      this.QueryFirst(Command command, ?parameters = parameters)
+      this.QueryFirst<'T>(Command command, ?parameters = parameters)
 
   type DbConnection with
     /// Executes a parameterized SQL query and returns the first row.
@@ -32,4 +32,4 @@ module QueryFirstExtensions =
 
     /// Executes a parameterized SQL query and returns the first row.
     member this.AsyncQueryFirst(command: string, ?parameters: ParameterCollection): Async<'T option> =
-      this.AsyncQueryFirst(Command command, ?parameters = parameters)
+      this.AsyncQueryFirst<'T>(Command command, ?parameters = parameters)

@@ -24,7 +24,7 @@ module QuerySingleExtensions =
 
     /// Executes a parameterized SQL query and returns the single row.
     member this.QuerySingle(command: string, ?parameters: ParameterCollection): 'T option =
-      this.QuerySingle(Command command, ?parameters = parameters)
+      this.QuerySingle<'T>(Command command, ?parameters = parameters)
 
   type DbConnection with
     /// Executes a parameterized SQL query and returns the single row.
@@ -49,4 +49,4 @@ module QuerySingleExtensions =
 
     /// Executes a parameterized SQL query and returns the single row.
     member this.AsyncQuerySingle(command: string, ?parameters: ParameterCollection): Async<'T option> =
-      this.AsyncQuerySingle(Command command, ?parameters = parameters)
+      this.AsyncQuerySingle<'T>(Command command, ?parameters = parameters)

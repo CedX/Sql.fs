@@ -26,6 +26,11 @@ type Mapper private () =
     | nullValue when Convert.IsDBNull nullValue -> Mapper.GetNullEquivalent(conversionType, defaultArg isNullable false)
     | nonNullValue -> Mapper.GetNonNullEquivalent(nonNullValue, conversionType)
 
+  /// Converts the specified object into an equivalent value of the specified type.
+  /// The `isNullable` argument indicates whether the specified conversion type is nullable.
+  member this.ChangeType(value: objnull, ?isNullable: bool): 'T =
+    this.ChangeType(value, typeof<'T>, ?isNullable = isNullable) :?> 'T
+
   /// Converts the specified object into an equivalent value of the specified column type.
   member this.ChangeType(value: objnull, column: ColumnInfo): objnull =
     this.ChangeType(value, column.PropertyType, column.IsNullable)

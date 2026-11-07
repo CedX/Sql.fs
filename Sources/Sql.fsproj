@@ -43,10 +43,7 @@
 		<Compile Include="Mapping/Mapper.fs" />
 		<Compile Include="Command/Parameter.fs" />
 		<Compile Include="Command/Command.fs" />
-		<Compile Include="Query/Execute.fs" />
-		<Compile Include="Query/ExecuteScalar.fs" />
-		<Compile Include="Query/Query.fs" />
-		<Compile Include="Query/QueryFirst.fs" />
-		<Compile Include="Query/QuerySingle.fs" />
+		<Compile Include="Query/*.fs" />
+		<Compile Include="Object/*.fs" />
 	</ItemGroup>
 </Project>
