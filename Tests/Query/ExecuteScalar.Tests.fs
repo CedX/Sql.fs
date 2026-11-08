@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -31,13 +32,13 @@ type QueryExecuteScalarExtensionsTests() =
   member _.AsyncExecuteScalar(): Task = task {
     let sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender"
     let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Balrog))
-    do! connection.AsyncExecuteScalar<int>(sql, parameters) |> ShouldAsync.be 2
+    do! connection.AsyncExecuteScalar<int>(sql, parameters) |> AsyncShould.be 2
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name"
     let parameters = ParameterCollection ["Name", "Characters" :> objnull; "Type", "table"]
-    do! connection.AsyncExecuteScalar<string>(sql, parameters) |> ShouldAsync.be "Characters"
+    do! connection.AsyncExecuteScalar<string>(sql, parameters) |> AsyncShould.be "Characters"
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name"
     let parameters = ParameterCollection (Parameter("Name", "FooBarBazQux"))
-    do! connection.AsyncExecuteScalar<string | null>(sql, parameters) |> ShouldAsync.beNull
+    do! connection.AsyncExecuteScalar<string | null>(sql, parameters) |> AsyncShould.beNull
   }

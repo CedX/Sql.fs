@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -57,7 +58,7 @@ type ObjectUpdateExtensionsTests() =
 
     sauron.LastName <- "The big bad guy"
     sauron.Gender <- CharacterGender.Istari
-    do! connection.AsyncUpdate sauron |> ShouldAsync.be 1
+    do! connection.AsyncUpdate sauron |> AsyncShould.be 1
 
     let! sauron = connection.AsyncQuerySingle<Character> sql
     let sauron = Option.get sauron
@@ -74,7 +75,7 @@ type ObjectUpdateExtensionsTests() =
 
     saruman.LastName <- "The traitor"
     saruman.Gender <- CharacterGender.DarkLord
-    do! connection.AsyncUpdate(saruman, [| "gender" |]) |> ShouldAsync.be 1
+    do! connection.AsyncUpdate(saruman, [| "gender" |]) |> AsyncShould.be 1
 
     let! saruman = connection.AsyncQuerySingle<Character> sql
     let saruman = Option.get saruman

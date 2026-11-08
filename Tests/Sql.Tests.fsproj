@@ -20,7 +20,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MSTest" Version="4.5.2" />
+		<PackageReference Include="Belin.Should" Version="2026.11.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
 		<PackageReference Include="SQLite" Version="3.54.1" />
 		<PackageReference Include="System.Data.SQLite" Version="2.0.4" />
 		<ProjectReference Include="../Sources/Sql.fsproj" />
@@ -30,7 +31,6 @@
 		<Compile Include="AssemblyInfo.fs" />
 		<Compile Include="Character.fs" />
 		<Compile Include="Connection.fs" />
-		<Compile Include="Should.fs" />
 		<Compile Include="**/*.Tests.fs" />
 	</ItemGroup>
 </Project>

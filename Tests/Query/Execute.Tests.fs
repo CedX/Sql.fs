@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -27,11 +28,11 @@ type QueryExecuteExtensionsTests() =
   [<TestMethod>]
   member _.AsyncExecute(): Task = task {
     let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Balrog))
-    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> ShouldAsync.be 16
-    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> ShouldAsync.be 2
-    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> ShouldAsync.be 14
+    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> AsyncShould.be 16
+    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> AsyncShould.be 2
+    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> AsyncShould.be 14
 
     let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Elf))
-    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> ShouldAsync.be 3
-    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> ShouldAsync.be 11
+    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> AsyncShould.be 3
+    do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> AsyncShould.be 11
   }

@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -36,15 +37,15 @@ type ObjectDeleteExtensionsTests() =
     let! record = connection.AsyncQuerySingle<Character>(sql, parameters)
 
     let character = Option.get record
-    do! connection.AsyncDelete character |> ShouldAsync.beTrue
-    do! connection.AsyncDelete character |> ShouldAsync.beFalse
-    do! connection.AsyncQueryFirst<Character>(sql, parameters) |> ShouldAsync.be None
+    do! connection.AsyncDelete character |> AsyncShould.beTrue
+    do! connection.AsyncDelete character |> AsyncShould.beFalse
+    do! connection.AsyncQueryFirst<Character>(sql, parameters) |> AsyncShould.be None
   }
 
   [<TestMethod>]
   member _.AsyncDeleteAll(): Task = task {
     let sql = "SELECT COUNT(*) FROM Characters"
-    do! connection.AsyncExecuteScalar<int> sql |> ShouldAsync.beGreaterThan 0
+    do! connection.AsyncExecuteScalar<int> sql |> AsyncShould.beGreaterThan 0
     do! connection.AsyncDeleteAll<Character>(truncate = true)
-    do! connection.AsyncExecuteScalar<int> sql |> ShouldAsync.be 0
+    do! connection.AsyncExecuteScalar<int> sql |> AsyncShould.be 0
   }

@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -81,7 +82,7 @@ type ObjectFindExtensionsTests() =
       character.Gender |> Should.be CharacterGender.Hobbit
 
     // It should return `None` if the record is not found.
-    do! connection.AsyncFind<Character> 666 |> ShouldAsync.be None
+    do! connection.AsyncFind<Character> 666 |> AsyncShould.be None
   }
 
   [<TestMethod>]

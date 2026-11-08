@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -21,5 +22,5 @@ type ObjectCountExtensionsTests() =
   [<TestMethod>]
   member _.AsyncCountAll(): Task = task {
     // It should return the total number of entities from the underlying table.
-    do! connection.AsyncCountAll<Character>() |> ShouldAsync.be 16
+    do! connection.AsyncCountAll<Character>() |> AsyncShould.be 16
   }

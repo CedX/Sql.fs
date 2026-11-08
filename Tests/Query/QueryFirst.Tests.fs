@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -45,5 +46,5 @@ type QueryFirstExtensionsTests() =
 
     // It should return `None` if the query produces no results.
     let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
-    do! connection.AsyncQueryFirst<Character>(sql, parameters) |> ShouldAsync.be None
+    do! connection.AsyncQueryFirst<Character>(sql, parameters) |> AsyncShould.be None
   }

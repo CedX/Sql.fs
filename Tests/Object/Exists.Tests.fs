@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -20,6 +21,6 @@ type ObjectExistsExtensionsTests() =
 
   [<TestMethod>]
   member _.AsyncExists(): Task = task {
-    do! connection.AsyncExists<Character> 1 |> ShouldAsync.beTrue
-    do! connection.AsyncExists<Character> 666 |> ShouldAsync.beFalse
+    do! connection.AsyncExists<Character> 1 |> AsyncShould.beTrue
+    do! connection.AsyncExists<Character> 666 |> AsyncShould.beFalse
   }

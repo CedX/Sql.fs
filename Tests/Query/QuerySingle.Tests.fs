@@ -1,5 +1,6 @@
 namespace Belin.Sql
 
+open Belin.Should
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System.Data.Common
 open System.Threading.Tasks
@@ -50,10 +51,10 @@ type QuerySingleExtensionsTests() =
 
     // It should return `None` if the query produces no results.
     let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
-    do! connection.AsyncQuerySingle<Character>(sql, parameters) |> ShouldAsync.be None
+    do! connection.AsyncQuerySingle<Character>(sql, parameters) |> AsyncShould.be None
 
     // It should return `None` if the query produces more than one result.
     let sql = "SELECT * FROM Characters WHERE gender = @Gender"
     let parameters = ParameterCollection (Parameter("Gender", CharacterGender.Human))
-    do! connection.AsyncQuerySingle<Character>(sql, parameters) |> ShouldAsync.be None
+    do! connection.AsyncQuerySingle<Character>(sql, parameters) |> AsyncShould.be None
   }
