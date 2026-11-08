@@ -81,33 +81,33 @@ type CommandBuilderTests() =
     command.Text |> Should.notContainString "lastName"
     command.Text |> Should.endWith @"WHERE ""ID"" = @ID"
 
-  // [<TestMethod>]
-  // member _.GetFindAllCommand() =
-  //   let builder = CommandBuilder.Create connection
+  [<TestMethod>]
+  member _.GetFindAllCommand() =
+    let builder = CommandBuilder.Create connection
 
-  //   // It should return the SQL command to find all entities.
-  //   let command, parameters = builder.GetFindAllCommand<Character>()
-  //   Assert.StartsWith(@"SELECT """, command.Text)
-  //   Assert.DoesNotContain("*", command.Text)
-  //   Assert.Contains(@"FROM ""main"".""Characters""", command.Text)
-  //   Assert.EndsWith(@"ORDER BY ""ID"" ASC", command.Text)
+    // It should return the SQL command to find all entities.
+    let command, parameters = builder.GetFindAllCommand<Character>(OrderHintCollection())
+    command.Text |> Should.startWith @"SELECT """
+    command.Text |> Should.notContainString "*"
+    command.Text |> Should.containString @"FROM ""main"".""Characters"""
+    command.Text |> Should.endWith @"ORDER BY ""ID"" ASC"
 
-  //   // It should also return an empty parameter collection.
-  //   Should.beEmpty parameters
+    // It should also return an empty parameter collection.
+    Should.beEmpty parameters
 
-  //   // It should allow sorting the results by a specific set of columns.
-  //   let command, _ = builder.GetFindAllCommand<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)])
-  //   Assert.StartsWith(@"SELECT """, command.Text)
-  //   Assert.DoesNotContain("*", command.Text)
-  //   Assert.Contains(@"FROM ""main"".""Characters""", command.Text)
-  //   Assert.EndsWith(@"ORDER BY ""gender"" ASC, ""fullName"" DESC", command.Text)
+    // It should allow sorting the results by a specific set of columns.
+    let command, _ = builder.GetFindAllCommand<Character>(OrderHintCollection ["gender", Ascending; "fullName", Descending])
+    command.Text |> Should.startWith @"SELECT """
+    command.Text |> Should.notContainString "*"
+    command.Text |> Should.containString @"FROM ""main"".""Characters"""
+    command.Text |> Should.endWith @"ORDER BY ""gender"" ASC, ""fullName"" DESC"
 
-  //   // It should allow selecting a specific set of columns.
-  //   let command, _ = builder.GetFindAllCommand<Character>(columns: ["firstName"])
-  //   Assert.StartsWith(@"SELECT ""firstName""", command.Text)
-  //   Assert.DoesNotContain("gender", command.Text)
-  //   Assert.DoesNotContain("lastName", command.Text)
-  //   Assert.EndsWith(@"ORDER BY ""ID"" ASC", command.Text)
+    // It should allow selecting a specific set of columns.
+    let command, _ = builder.GetFindAllCommand<Character>(OrderHintCollection(), "firstName")
+    command.Text |> Should.startWith @"SELECT ""firstName"""
+    command.Text |> Should.notContainString "gender"
+    command.Text |> Should.notContainString "lastName"
+    command.Text |> Should.endWith @"ORDER BY ""ID"" ASC"
 
   [<TestMethod>]
   member _.GetInsertCommand() =

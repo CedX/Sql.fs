@@ -170,6 +170,33 @@ type CommandBuilder() =
 
     Command text, ParameterCollection parameter
 
+  /// Gets the generated command to find all entities.
+  member this.GetFindAllCommand<'T>(orderHints: OrderHintCollection, [<ParamArray>] columns: string array): Command * ParameterCollection =
+    let table = Mapper.Instance.GetTable<'T>()
+    let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
+
+    let fields = ResizeArray(
+      if columns.Length = 0 then table.Columns.Values else table.Columns.Values |> Seq.filter (fun column -> columns |> Array.contains column.Name)
+      |> Seq.filter (fun column -> column.CanWrite)
+      |> Seq.map (fun column -> column.Name))
+
+    if not (fields.Contains idColumn.Name) then fields.Add idColumn.Name
+
+    let orderBy =
+      if orderHints.Count = 0 then $"{this.QuoteIdentifier idColumn.Name} ASC"
+      else
+        orderHints
+        |> Seq.map (fun orderHint -> $"""{this.QuoteIdentifier orderHint.Column} {if orderHint.SortOrder = Descending then "DESC" else "ASC"}""")
+        |> String.concat ", "
+
+    let text = CommandBuilder.NormalizeCommand $"""
+      SELECT {fields |> Seq.map this.QuoteIdentifier |> String.concat ", "}
+      FROM {this.GetTableName table}
+      ORDER BY {orderBy}
+      """
+
+    Command text, ParameterCollection()
+
   /// Gets the generated command to insert an entity.
   member this.GetInsertCommand(entity: 'T): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
