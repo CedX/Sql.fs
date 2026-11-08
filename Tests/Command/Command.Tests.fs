@@ -75,7 +75,7 @@ type CommandBuilderTests() =
     parameter.Value |> Should.be 1_000
 
     // It should allow selecting a specific set of columns.
-    let command, _ = builder.GetFindCommand<Character>(character.Id, "firstName")
+    let command, _ = builder.GetFindCommand<Character>(character.Id, [| "firstName" |])
     command.Text |> Should.startWith @"SELECT ""firstName"""
     command.Text |> Should.notContainString "gender"
     command.Text |> Should.notContainString "lastName"
@@ -86,7 +86,7 @@ type CommandBuilderTests() =
     let builder = CommandBuilder.Create connection
 
     // It should return the SQL command to find all entities.
-    let command, parameters = builder.GetFindAllCommand<Character>(OrderHintCollection())
+    let command, parameters = builder.GetFindAllCommand<Character>()
     command.Text |> Should.startWith @"SELECT """
     command.Text |> Should.notContainString "*"
     command.Text |> Should.containString @"FROM ""main"".""Characters"""
@@ -103,7 +103,7 @@ type CommandBuilderTests() =
     command.Text |> Should.endWith @"ORDER BY ""gender"" ASC, ""fullName"" DESC"
 
     // It should allow selecting a specific set of columns.
-    let command, _ = builder.GetFindAllCommand<Character>(OrderHintCollection(), "firstName")
+    let command, _ = builder.GetFindAllCommand<Character>(columns = [| "firstName"|])
     command.Text |> Should.startWith @"SELECT ""firstName"""
     command.Text |> Should.notContainString "gender"
     command.Text |> Should.notContainString "lastName"
@@ -140,7 +140,7 @@ type CommandBuilderTests() =
     parameters["lastName"].Value |> Should.be ""
 
     // It should allow updating a specific set of columns.
-    let _, parameters = builder.GetUpdateCommand(character, "firstName")
+    let _, parameters = builder.GetUpdateCommand(character, [| "firstName" |])
     parameters.Count |> Should.be 2
     parameters["ID"].Value |> Should.be 1_000
     parameters["firstName"].Value |> Should.be "Cédric"

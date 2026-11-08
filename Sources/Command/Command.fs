@@ -150,15 +150,17 @@ type CommandBuilder() =
     Command text, ParameterCollection parameter
 
   /// Gets the generated command to find an entity.
-  member this.GetFindCommand<'T>(id: obj, [<ParamArray>] columns: string array): Command * ParameterCollection =
+  member this.GetFindCommand<'T>(id: obj, ?columns: string array): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
     let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
-    let fields = ResizeArray(
-      if columns.Length = 0 then table.Columns.Values else table.Columns.Values |> Seq.filter (fun column -> columns |> Array.contains column.Name)
-      |> Seq.filter (fun column -> column.CanWrite)
-      |> Seq.map (fun column -> column.Name))
+    let columns =
+      match columns with
+      | None -> table.Columns.Values
+      | Some list when list.Length = 0 -> table.Columns.Values
+      | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
+    let fields = ResizeArray(columns |> Seq.filter (fun column -> column.CanWrite) |> Seq.map (fun column -> column.Name))
     if not (fields.Contains idColumn.Name) then fields.Add idColumn.Name
 
     let parameter = Parameter((if this.UsePositionalParameters then "?1" else this.GetParameterName idColumn), id)
@@ -171,17 +173,20 @@ type CommandBuilder() =
     Command text, ParameterCollection parameter
 
   /// Gets the generated command to find all entities.
-  member this.GetFindAllCommand<'T>(orderHints: OrderHintCollection, [<ParamArray>] columns: string array): Command * ParameterCollection =
+  member this.GetFindAllCommand<'T>(?orderHints: OrderHintCollection, ?columns: string array): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
     let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
-    let fields = ResizeArray(
-      if columns.Length = 0 then table.Columns.Values else table.Columns.Values |> Seq.filter (fun column -> columns |> Array.contains column.Name)
-      |> Seq.filter (fun column -> column.CanWrite)
-      |> Seq.map (fun column -> column.Name))
+    let columns =
+      match columns with
+      | None -> table.Columns.Values
+      | Some list when list.Length = 0 -> table.Columns.Values
+      | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
+    let fields = ResizeArray(columns |> Seq.filter (fun column -> column.CanWrite) |> Seq.map (fun column -> column.Name))
     if not (fields.Contains idColumn.Name) then fields.Add idColumn.Name
 
+    let orderHints = defaultArg orderHints (OrderHintCollection())
     let orderBy =
       if orderHints.Count = 0 then $"{this.QuoteIdentifier idColumn.Name} ASC"
       else
@@ -219,21 +224,23 @@ type CommandBuilder() =
     Command text, ParameterCollection parameters
 
   /// Gets the generated command to update an entity.
-  member this.GetUpdateCommand(entity: 'T, [<ParamArray>] columns: string array): Command * ParameterCollection =
+  member this.GetUpdateCommand(entity: 'T, ?columns: string array): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
     let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
-    let fields =
-      if columns.Length = 0 then table.Columns.Values else table.Columns.Values |> Seq.filter (fun column -> columns |> Array.contains column.Name)
-      |> Seq.filter (fun column -> column.CanRead && not column.IsComputed)
-      |> Seq.toArray
+    let columns =
+      match columns with
+      | None -> table.Columns.Values
+      | Some list when list.Length = 0 -> table.Columns.Values
+      | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
     let formatAssignment (field: ColumnInfo) =
       $"""{this.QuoteIdentifier field.Name} = {if this.UsePositionalParameters then "?" else this.GetParameterName field}"""
 
+    let fields = columns |> Seq.filter (fun column -> column.CanRead && not column.IsComputed) |> Seq.toArray
     let text = CommandBuilder.NormalizeCommand $"""
       UPDATE {this.GetTableName table}
-      SET { fields |> Seq.map formatAssignment |> String.concat ", "}
+      SET {fields |> Seq.map formatAssignment |> String.concat ", "}
       WHERE {this.QuoteIdentifier idColumn.Name} = {if this.UsePositionalParameters then "?" else this.GetParameterName idColumn}
       """
 
