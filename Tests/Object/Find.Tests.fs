@@ -84,57 +84,57 @@ type ObjectFindExtensionsTests() =
     do! connection.AsyncFind<Character> 666 |> ShouldAsync.be None
   }
 
-  // [<TestMethod>]
-  // member _.FindAll() =
-  //   // It should return the complete list of entities, sorted by default according to the identity column.
-  //   let records = connection.FindAll<Character>()
-  //   Assert.HasCount(16, records)
-  //   Assert.AreEqual(1, records[0].Id)
-  //   Assert.AreEqual("Aragorn", records[0].FullName)
-  //   Assert.AreEqual(16, records[15].Id)
-  //   Assert.AreEqual("Sauron", records[15].FullName)
+  [<TestMethod>]
+  member _.FindAll() =
+    // It should return the complete list of entities, sorted by default according to the identity column.
+    let records = connection.FindAll<Character>()
+    records.Length |> Should.be 16
+    records[0].Id |> Should.be 1
+    records[0].FullName |> Should.be (Some "Aragorn")
+    records[15].Id |> Should.be 16
+    records[15].FullName |> Should.be (Some "Sauron")
 
-  //   // It should allow sorting the results by a specific set of columns.
-  //   records = connection.FindAll<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)])
-  //   Assert.HasCount(16, records)
-  //   Assert.AreEqual(11, records[0].Id)
-  //   Assert.AreEqual("Gothmog", records[0].FullName)
-  //   Assert.AreEqual(8, records[15].Id)
-  //   Assert.AreEqual("Gandalf", records[15].FullName)
+    // It should allow sorting the results by a specific set of columns.
+    let records = connection.FindAll<Character>(OrderHintCollection ["gender", Ascending; "fullName", Descending])
+    records.Length |> Should.be 16
+    records[0].Id |> Should.be 11
+    records[0].FullName |> Should.be (Some "Gothmog")
+    records[15].Id |> Should.be 8
+    records[15].FullName |> Should.be (Some "Gandalf")
 
-  //   // It should allow selecting a specific set of columns.
-  //   records = connection.FindAll<Character>(columns: [| "gender" |])
-  //   Assert.AreEqual(1, records[0].Id)
-  //   Assert.AreEqual(CharacterGender.Human, records[0].Gender)
-  //   records[0].FullName |> Should.beNull
-  //   Assert.AreEqual(16, records[15].Id)
-  //   Assert.AreEqual(CharacterGender.DarkLord, records[15].Gender)
-  //   records[15].FullName |> Should.beNull
+    // It should allow selecting a specific set of columns.
+    let records = connection.FindAll<Character>(columns = [| "gender" |])
+    records[0].Id |> Should.be 1
+    records[0].Gender |> Should.be CharacterGender.Human
+    records[0].FullName |> Should.be None
+    records[15].Id |> Should.be 16
+    records[15].Gender |> Should.be CharacterGender.DarkLord
+    records[15].FullName |> Should.be None
 
-  // [<TestMethod>]
-  // member _.AsyncFindAll(): Task = task {
-  //   // It should return the complete list of entities, sorted by default according to the identity column.
-  //   let records = await connection.AsyncFindAll<Character>(
-  //   Assert.HasCount(16, records)
-  //   Assert.AreEqual(1, records[0].Id)
-  //   Assert.AreEqual("Aragorn", records[0].FullName)
-  //   Assert.AreEqual(16, records[15].Id)
-  //   Assert.AreEqual("Sauron", records[15].FullName)
+  [<TestMethod>]
+  member _.AsyncFindAll(): Task = task {
+    // It should return the complete list of entities, sorted by default according to the identity column.
+    let! records = connection.AsyncFindAll<Character>()
+    records.Length |> Should.be 16
+    records[0].Id |> Should.be 1
+    records[0].FullName |> Should.be (Some "Aragorn")
+    records[15].Id |> Should.be 16
+    records[15].FullName |> Should.be (Some "Sauron")
 
-  //   // It should allow sorting the results by a specific set of columns.
-  //   records = await connection.AsyncFindAll<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)],
-  //   Assert.HasCount(16, records)
-  //   Assert.AreEqual(11, records[0].Id)
-  //   Assert.AreEqual("Gothmog", records[0].FullName)
-  //   Assert.AreEqual(8, records[15].Id)
-  //   Assert.AreEqual("Gandalf", records[15].FullName)
+    // It should allow sorting the results by a specific set of columns.
+    let! records = connection.AsyncFindAll<Character>(OrderHintCollection ["gender", Ascending; "fullName", Descending])
+    records.Length |> Should.be 16
+    records[0].Id |> Should.be 11
+    records[0].FullName |> Should.be (Some "Gothmog")
+    records[15].Id |> Should.be 8
+    records[15].FullName |> Should.be (Some "Gandalf")
 
-  //   // It should allow selecting a specific set of columns.
-  //   records = await connection.AsyncFindAll<Character>(columns: [| "gender" |],
-  //   Assert.AreEqual(1, records[0].Id)
-  //   Assert.AreEqual(CharacterGender.Human, records[0].Gender)
-  //   records[0].FullName |> Should.beNull
-  //   Assert.AreEqual(16, records[15].Id)
-  //   Assert.AreEqual(CharacterGender.DarkLord, records[15].Gender)
-  //   records[15].FullName |> Should.beNull
-  // }
+    // It should allow selecting a specific set of columns.
+    let! records = connection.AsyncFindAll<Character>(columns = [| "gender" |])
+    records[0].Id |> Should.be 1
+    records[0].Gender |> Should.be CharacterGender.Human
+    records[0].FullName |> Should.be None
+    records[15].Id |> Should.be 16
+    records[15].Gender |> Should.be CharacterGender.DarkLord
+    records[15].FullName |> Should.be None
+  }
