@@ -87,14 +87,16 @@ type ParameterCollection([<ParamArray>] parameters: Parameter array) =
     | parameter -> parameter
 
   /// Adds a new named parameter to the end of this collection.
-  member this.AddWithValue(name: string, value: objnull): Parameter =
+  /// Returns the newly added parameter.
+  member this.AddParameter(name: string, value: objnull): Parameter =
     let parameter = Parameter(name, value)
     this.Add parameter
     parameter
 
   /// Adds a new positional parameter to the end of this collection.
-  member this.AddWithValue(value: objnull): Parameter =
-    this.AddWithValue($"?{this.Count + 1}", value)
+  /// Returns the newly added parameter.
+  member this.AddParameter(value: objnull): Parameter =
+    this.AddParameter($"?{this.Count + 1}", value)
 
   /// Gets a value indicating whether a parameter in this collection has the specified name.
   member this.Contains(name: string): bool =

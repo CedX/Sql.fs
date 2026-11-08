@@ -72,16 +72,16 @@ type ParameterCollectionTests() =
     (fun () -> collection["@Foo"] |> ignore<Parameter>) |> Should.throw typeof<KeyNotFoundException>
 
   [<TestMethod>]
-  member _.AddWithValue() =
+  member _.AddParameter() =
     let collection = ParameterCollection()
     Should.beEmpty collection
 
-    let parameter = collection.AddWithValue("Name", "Value1")
+    let parameter = collection.AddParameter("Name", "Value1")
     collection.Count |> Should.be 1
     parameter.Name |> Should.be "@Name"
     parameter.Value |> Should.be "Value1"
 
-    let parameter = collection.AddWithValue "Value2"
+    let parameter = collection.AddParameter "Value2"
     collection.Count |> Should.be 2
     parameter.Name |> Should.be "?2"
     parameter.Value |> Should.be "Value2"
