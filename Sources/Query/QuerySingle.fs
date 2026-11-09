@@ -9,7 +9,7 @@ module QuerySingleExtensions =
 
   type IDbConnection with
     /// Executes a parameterized SQL query and returns the single row.
-    member this.QuerySingle(command: Command, ?parameters: ParameterCollection): 'T option =
+    member this.QuerySingle<'T>(command: Command, ?parameters: ParameterCollection): 'T option =
       if this.State = ConnectionState.Closed then this.Open()
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters)
       use reader = dbCommand.ExecuteReader()
@@ -23,12 +23,12 @@ module QuerySingleExtensions =
       if rowCount = 1 then record else None
 
     /// Executes a parameterized SQL query and returns the single row.
-    member this.QuerySingle(command: string, ?parameters: ParameterCollection): 'T option =
+    member this.QuerySingle<'T>(command: string, ?parameters: ParameterCollection): 'T option =
       this.QuerySingle<'T>(Command command, ?parameters = parameters)
 
   type DbConnection with
     /// Executes a parameterized SQL query and returns the single row.
-    member this.AsyncQuerySingle(command: Command, ?parameters: ParameterCollection): Async<'T option> = async {
+    member this.AsyncQuerySingle<'T>(command: Command, ?parameters: ParameterCollection): Async<'T option> = async {
       let! cancellationToken = Async.CancellationToken
       if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
@@ -48,5 +48,5 @@ module QuerySingleExtensions =
     }
 
     /// Executes a parameterized SQL query and returns the single row.
-    member this.AsyncQuerySingle(command: string, ?parameters: ParameterCollection): Async<'T option> =
+    member this.AsyncQuerySingle<'T>(command: string, ?parameters: ParameterCollection): Async<'T option> =
       this.AsyncQuerySingle<'T>(Command command, ?parameters = parameters)

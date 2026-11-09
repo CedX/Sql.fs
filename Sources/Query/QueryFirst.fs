@@ -9,19 +9,19 @@ module QueryFirstExtensions =
 
   type IDbConnection with
     /// Executes a parameterized SQL query and returns the first row.
-    member this.QueryFirst(command: Command, ?parameters: ParameterCollection): 'T option =
+    member this.QueryFirst<'T>(command: Command, ?parameters: ParameterCollection): 'T option =
       if this.State = ConnectionState.Closed then this.Open()
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters)
       use reader = dbCommand.ExecuteReader()
       if reader.Read() then Some (Mapper.Instance.CreateInstance<'T> reader) else None
 
     /// Executes a parameterized SQL query and returns the first row.
-    member this.QueryFirst(command: string, ?parameters: ParameterCollection): 'T option =
+    member this.QueryFirst<'T>(command: string, ?parameters: ParameterCollection): 'T option =
       this.QueryFirst<'T>(Command command, ?parameters = parameters)
 
   type DbConnection with
     /// Executes a parameterized SQL query and returns the first row.
-    member this.AsyncQueryFirst(command: Command, ?parameters: ParameterCollection): Async<'T option> = async {
+    member this.AsyncQueryFirst<'T>(command: Command, ?parameters: ParameterCollection): Async<'T option> = async {
       let! cancellationToken = Async.CancellationToken
       if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
@@ -31,5 +31,5 @@ module QueryFirstExtensions =
     }
 
     /// Executes a parameterized SQL query and returns the first row.
-    member this.AsyncQueryFirst(command: string, ?parameters: ParameterCollection): Async<'T option> =
+    member this.AsyncQueryFirst<'T>(command: string, ?parameters: ParameterCollection): Async<'T option> =
       this.AsyncQueryFirst<'T>(Command command, ?parameters = parameters)

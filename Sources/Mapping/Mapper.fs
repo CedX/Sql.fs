@@ -28,7 +28,7 @@ type Mapper private () =
 
   /// Converts the specified object into an equivalent value of the specified type.
   /// The `isNullable` argument indicates whether the specified conversion type is nullable.
-  member this.ChangeType(value: objnull, ?isNullable: bool): 'T =
+  member this.ChangeType<'T>(value: objnull, ?isNullable: bool): 'T =
     this.ChangeType(value, typeof<'T>, ?isNullable = isNullable) :?> 'T
 
   /// Converts the specified object into an equivalent value of the specified column type.
@@ -40,7 +40,7 @@ type Mapper private () =
     mapping.GetOrAdd(typeof<'T>, TableInfo)
 
   /// Creates a new object of a given type from the specified dictionary.
-  member this.CreateInstance(record: IDictionary<string, objnull>): 'T =
+  member this.CreateInstance<'T>(record: IDictionary<string, objnull>): 'T =
     if typeof<'T> = typeof<Map<string, objnull>> then
       record
       |> Seq.map (fun entry -> entry.Key, entry.Value)
@@ -54,18 +54,18 @@ type Mapper private () =
       instance
 
   /// Creates a new object of the given type from the specified data record.
-  member this.CreateInstance(record: IDataRecord): 'T =
+  member this.CreateInstance<'T>(record: IDataRecord): 'T =
     this.CreateInstance<'T>(Mapper.SplitOn record |> Seq.exactlyOne)
 
   /// Creates a new object pair of the given types from the specified data record.
-  member this.CreateInstance(record: IDataRecord, ?splitOn: string): 'Item1 * 'Item2 =
+  member this.CreateInstance<'Item1, 'Item2>(record: IDataRecord, ?splitOn: string): 'Item1 * 'Item2 =
     let records = Mapper.SplitOn(record, defaultArg splitOn "Id")
     let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'Item1> else this.CreateInstance<'Item1>(records[0])
     let item2 = if records.Count <= 1 || Mapper.IsNullRecord(records[1]) then Unchecked.defaultof<'Item2> else this.CreateInstance<'Item2>(records[1])
     item1, item2
 
   /// Creates a new object tuple of the given types from the specified data record.
-  member this.CreateInstance(record: IDataRecord, ?splitOn: string * string): 'Item1 * 'Item2 * 'Item3 =
+  member this.CreateInstance<'Item1, 'Item2, 'Item3>(record: IDataRecord, ?splitOn: string * string): 'Item1 * 'Item2 * 'Item3 =
     let firstField, secondField = defaultArg splitOn ("Id", "Id")
     let records = Mapper.SplitOn(record, firstField, secondField)
     let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'Item1> else this.CreateInstance<'Item1>(records[0])
@@ -74,7 +74,7 @@ type Mapper private () =
     item1, item2, item3
 
   /// Creates a new object tuple of the given types from the specified data record.
-  member this.CreateInstance(record: IDataRecord, ?splitOn: string * string * string): 'Item1 * 'Item2 * 'Item3 * 'Item4 =
+  member this.CreateInstance<'Item1, 'Item2, 'Item3, 'Item4>(record: IDataRecord, ?splitOn: string * string * string): 'Item1 * 'Item2 * 'Item3 * 'Item4 =
     let firstField, secondField, thirdField = defaultArg splitOn ("Id", "Id", "Id")
     let records = Mapper.SplitOn(record, firstField, secondField, thirdField)
     let item1 = if Mapper.IsNullRecord(records[0]) then Unchecked.defaultof<'Item1> else this.CreateInstance<'Item1>(records[0])
@@ -84,25 +84,25 @@ type Mapper private () =
     item1, item2, item3, item4
 
   /// Creates new objects of the given type from the specified data reader.
-  member this.CreateInstances(reader: IDataReader): 'T seq = seq {
+  member this.CreateInstances<'T>(reader: IDataReader): 'T seq = seq {
     use record = reader
     while record.Read() do yield this.CreateInstance<'T> record
   }
 
   /// Creates new object pairs of the given types from the specified data reader.
-  member this.CreateInstances(reader: IDataReader, ?splitOn: string): ('Item1 * 'Item2) seq = seq {
+  member this.CreateInstances<'Item1, 'Item2>(reader: IDataReader, ?splitOn: string): ('Item1 * 'Item2) seq = seq {
     use record = reader
     while record.Read() do yield this.CreateInstance<'Item1, 'Item2>(record, ?splitOn = splitOn)
   }
 
   /// Creates new object tuples of the given types from the specified data reader.
-  member this.CreateInstances(reader: IDataReader, ?splitOn: string * string): ('Item1 * 'Item2 * 'Item3) seq = seq {
+  member this.CreateInstances<'Item1, 'Item2, 'Item3>(reader: IDataReader, ?splitOn: string * string): ('Item1 * 'Item2 * 'Item3) seq = seq {
     use record = reader
     while record.Read() do yield this.CreateInstance<'Item1, 'Item2, 'Item3>(record, ?splitOn = splitOn)
   }
 
   /// Creates new object tuples of the given types from the specified data reader.
-  member this.CreateInstances(reader: IDataReader, ?splitOn: string * string * string): ('Item1 * 'Item2 * 'Item3 * 'Item4) seq = seq {
+  member this.CreateInstances<'Item1, 'Item2, 'Item3, 'Item4>(reader: IDataReader, ?splitOn: string * string * string): ('Item1 * 'Item2 * 'Item3 * 'Item4) seq = seq {
     use record = reader
     while record.Read() do yield this.CreateInstance<'Item1, 'Item2, 'Item3, 'Item4>(record, ?splitOn = splitOn)
   }

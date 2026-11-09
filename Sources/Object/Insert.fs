@@ -9,7 +9,7 @@ module ObjectInsertExtensions =
 
   type IDbConnection with
     /// Inserts the specified entity.
-    member this.Insert(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): int64 =
+    member this.Insert<'T when 'T: not null>(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): int64 =
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetInsertCommand<'T> entity
       command.Timeout <- defaultArg timeout 30
@@ -23,7 +23,7 @@ module ObjectInsertExtensions =
 
   type DbConnection with
     /// Inserts the specified entity.
-    member this.AsyncInsert(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<int64> = async {
+    member this.AsyncInsert<'T when 'T: not null>(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<int64> = async {
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetInsertCommand<'T> entity
       command.Timeout <- defaultArg timeout 30

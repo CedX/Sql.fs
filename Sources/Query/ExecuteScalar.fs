@@ -10,7 +10,7 @@ module QueryExecuteScalarExtensions =
   type IDbConnection with
     /// Executes a parameterized SQL query that selects a single value.
     /// Returns the first column of the first row.
-    member this.ExecuteScalar(command: Command, ?parameters: ParameterCollection): 'T =
+    member this.ExecuteScalar<'T>(command: Command, ?parameters: ParameterCollection): 'T =
       if this.State = ConnectionState.Closed then this.Open()
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters)
       let scalar = dbCommand.ExecuteScalar()
@@ -18,13 +18,13 @@ module QueryExecuteScalarExtensions =
 
     /// Executes a parameterized SQL query that selects a single value.
     /// Returns the first column of the first row.
-    member this.ExecuteScalar(command: string, ?parameters: ParameterCollection): 'T =
+    member this.ExecuteScalar<'T>(command: string, ?parameters: ParameterCollection): 'T =
       this.ExecuteScalar<'T>(Command command, ?parameters = parameters)
 
   type DbConnection with
     /// Executes a parameterized SQL query that selects a single value.
     /// Returns the first column of the first row.
-    member this.AsyncExecuteScalar(command: Command, ?parameters: ParameterCollection): Async<'T> = async {
+    member this.AsyncExecuteScalar<'T>(command: Command, ?parameters: ParameterCollection): Async<'T> = async {
       let! cancellationToken = Async.CancellationToken
       if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
@@ -34,5 +34,5 @@ module QueryExecuteScalarExtensions =
 
     /// Executes a parameterized SQL query that selects a single value.
     /// Returns the first column of the first row.
-    member this.AsyncExecuteScalar(command: string, ?parameters: ParameterCollection): Async<'T> =
+    member this.AsyncExecuteScalar<'T>(command: string, ?parameters: ParameterCollection): Async<'T> =
       this.AsyncExecuteScalar<'T>(Command command, ?parameters = parameters)

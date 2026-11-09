@@ -9,7 +9,7 @@ module ObjectUpdateExtensions =
 
   type IDbConnection with
     /// Updates the specified entity.
-    member this.Update(entity: 'T, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): int =
+    member this.Update<'T when 'T: not null>(entity: 'T, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): int =
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetUpdateCommand<'T>(entity, ?columns = columns)
       command.Timeout <- defaultArg timeout 30
@@ -18,7 +18,7 @@ module ObjectUpdateExtensions =
 
   type DbConnection with
     /// Updates the specified entity.
-    member this.AsyncUpdate(entity: 'T, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<int> = async {
+    member this.AsyncUpdate<'T when 'T: not null>(entity: 'T, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<int> = async {
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetUpdateCommand<'T>(entity, ?columns = columns)
       command.Timeout <- defaultArg timeout 30
