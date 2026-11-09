@@ -22,7 +22,7 @@ type Character =
     FirstName: string
 
     /// The full name.
-    [<Column("fullName"); DatabaseGenerated(DatabaseGeneratedOption.Computed)>]
+    [<Column "fullName"; DatabaseGenerated(DatabaseGeneratedOption.Computed)>]
     FullName: string option
 
     /// The character's gender.
