@@ -1,4 +1,5 @@
 namespace Belin.Sql
+// fsharplint:disable MaxCharactersOnLine
 
 open System.Data
 open System.Data.Common
