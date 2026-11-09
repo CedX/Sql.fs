@@ -111,7 +111,7 @@ type CommandBuilder() =
     Command $"SELECT COUNT(*) FROM {tableName}", ParameterCollection()
 
   /// Gets the generated command to delete an entity.
-  member this.GetDeleteCommand<'T>(entity: 'T): Command * ParameterCollection =
+  member this.GetDeleteCommand<'T when 'T: not null>(entity: 'T): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
     let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
@@ -203,7 +203,7 @@ type CommandBuilder() =
     Command text, ParameterCollection()
 
   /// Gets the generated command to insert an entity.
-  member this.GetInsertCommand<'T>(entity: 'T): Command * ParameterCollection =
+  member this.GetInsertCommand<'T when 'T: not null>(entity: 'T): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
     let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
@@ -224,7 +224,7 @@ type CommandBuilder() =
     Command text, ParameterCollection parameters
 
   /// Gets the generated command to update an entity.
-  member this.GetUpdateCommand<'T>(entity: 'T, ?columns: string array): Command * ParameterCollection =
+  member this.GetUpdateCommand<'T when 'T: not null>(entity: 'T, ?columns: string array): Command * ParameterCollection =
     let table = Mapper.Instance.GetTable<'T>()
     let idColumn = match table.IdentityColumn with Some column -> column | None -> invalidOp "The identity column could not be found."
 
