@@ -26,7 +26,7 @@ type QueryExecuteScalarExtensionsTests() =
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name"
     let parameters = ParameterCollection (Parameter("Name", "FooBarBazQux"))
-    connection.ExecuteScalar<string>(sql, parameters) |> Should.beNull
+    connection.ExecuteScalar(sql, parameters) |> Should.beNull
 
   // [<TestMethod>]
   member _.AsyncExecuteScalar(): Task = task {
@@ -40,5 +40,5 @@ type QueryExecuteScalarExtensionsTests() =
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name"
     let parameters = ParameterCollection (Parameter("Name", "FooBarBazQux"))
-    do! connection.AsyncExecuteScalar<string | null>(sql, parameters) |> AsyncShould.beNull
+    do! connection.AsyncExecuteScalar(sql, parameters) |> AsyncShould.beNull
   }

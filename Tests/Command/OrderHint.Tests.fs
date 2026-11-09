@@ -41,7 +41,7 @@ type OrderHintCollectionTests() =
     collection[0] |> Should.be orderHint
 
     // It should throw an error if the specified column does not exist.
-    (fun () -> collection["foo"] |> ignore<OrderHint>) |> Should.throw typeof<KeyNotFoundException>
+    Should.throw<KeyNotFoundException> (fun () -> collection["foo"] |> ignore<OrderHint>)
 
   [<TestMethod>]
   member _.AddOrderHint() =
@@ -84,4 +84,4 @@ type OrderHintCollectionTests() =
 
     // It should throw an error if the specified column does not exist.
     let collection = OrderHintCollection ["ID", Descending; "Name", Ascending]
-    (fun () -> collection.RemoveAt "Foo") |> Should.throw typeof<KeyNotFoundException>
+    Should.throw<KeyNotFoundException> (fun () -> collection.RemoveAt "Foo")

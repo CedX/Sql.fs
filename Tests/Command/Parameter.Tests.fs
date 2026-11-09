@@ -70,7 +70,7 @@ type ParameterCollectionTests() =
     collection[1] |> Should.be parameter
 
     // It should throw an error if the specified name does not exist.
-    (fun () -> collection["@Foo"] |> ignore<Parameter>) |> Should.throw typeof<KeyNotFoundException>
+    Should.throw<KeyNotFoundException> (fun () -> collection["@Foo"] |> ignore<Parameter>)
 
   [<TestMethod>]
   member _.AddParameter() =
@@ -115,4 +115,4 @@ type ParameterCollectionTests() =
 
     // It should throw an error if the specified name does not exist.
     let collection = ParameterCollection ["?1", 123 :> objnull; "@Key", "Unique"]
-    (fun () -> collection.RemoveAt "Foo") |> Should.throw typeof<KeyNotFoundException>
+    Should.throw<KeyNotFoundException> (fun () -> collection.RemoveAt "Foo")

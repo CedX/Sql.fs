@@ -140,7 +140,7 @@ type MapperTests() =
 
     // It should support creating an object of type `Map<string, objnull>`.
     let map = Mapper.Instance.CreateInstance<Map<string, objnull>> properties
-    map |> Should.beOfType typeof<Map<string, objnull>>
+    Should.beOfType<Map<string, objnull>> map
     map["CLASS"] |> Should.be "Bard/minstrel"
     map["firstName"] |> Should.be "Cédric"
     map["gender"] |> Should.be (nameof CharacterGender.Balrog)
@@ -148,7 +148,7 @@ type MapperTests() =
 
     // It should create an object of the specified type.
     let character = Mapper.Instance.CreateInstance<Character> properties
-    character |> Should.beOfType typeof<Character>
+    Should.beOfType<Character> character
     character.FirstName |> Should.be "Cédric"
     character.Gender |> Should.be CharacterGender.Balrog
     character.LastName |> Should.be ""
