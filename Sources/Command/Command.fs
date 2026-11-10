@@ -117,7 +117,7 @@ type CommandBuilder() =
 
     let parameter = Parameter(
       (if this.UsePositionalParameters then "?1" else this.GetParameterName idColumn),
-      this.GetParameterValue(idColumn, entity))
+      this.GetParameterValue(entity, idColumn))
 
     let text = CommandBuilder.NormalizeCommand $"""
       DELETE FROM {this.GetTableName table}
@@ -219,7 +219,7 @@ type CommandBuilder() =
       |> Seq.indexed
       |> Seq.map (fun (index, field) -> Parameter(
         (if this.UsePositionalParameters then $"?{index + 1}" else this.GetParameterName field),
-        this.GetParameterValue(field, entity)))
+        this.GetParameterValue(entity, field)))
 
     Command text, ParameterCollection parameters
 
@@ -249,10 +249,10 @@ type CommandBuilder() =
       |> Seq.indexed
       |> Seq.map (fun (index, field) -> Parameter(
         (if this.UsePositionalParameters then $"?{index + 1}" else this.GetParameterName field),
-        this.GetParameterValue(field, entity)))
+        this.GetParameterValue(entity, field)))
 
     let idParameter = Parameter(if this.UsePositionalParameters then $"?{fields.Length + 1}" else this.GetParameterName idColumn)
-    idParameter.Value <- this.GetParameterValue(idColumn, entity)
+    idParameter.Value <- this.GetParameterValue(entity, idColumn)
     Command text, ParameterCollection(Seq.append parameters (Seq.singleton idParameter))
 
   /// Given an unquoted identifier, returns the correct quoted form of that identifier.
@@ -275,9 +275,12 @@ type CommandBuilder() =
     $"{this.ParameterPrefix}{column.Name}"
 
   /// Returns the parameter value corresponding to the specified column.
-  member private _.GetParameterValue<'T>(column: ColumnInfo, entity: 'T): objnull =
+  member private _.GetParameterValue(entity: obj, column: ColumnInfo): objnull =
     let value = column.GetValue entity
-    if column.PropertyType.IsEnum && stringTypes |> Array.contains column.DbType then string value else value
+    match column.PropertyType with
+    | propertyType when propertyType.IsEnum && stringTypes |> Array.contains column.DbType -> string value
+    | propertyType when Mapper.IsOptionType propertyType -> Option.toObj (value :?> Option<obj>)
+    | _ -> value
 
   /// Returns the fully qualified name corresponding to the specified table.
   member private this.GetTableName(table: TableInfo): string =

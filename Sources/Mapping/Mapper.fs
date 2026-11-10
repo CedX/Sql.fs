@@ -111,6 +111,13 @@ type Mapper private () =
   static member internal IsNullRecord(dictionary: IDictionary<string, objnull>) =
     dictionary.Values |> Seq.forall isNull
 
+  /// Returns a value indicating whether the specified type is `'T option` or `'T voption`.
+  static member internal IsOptionType(targetType: Type): bool =
+    if not targetType.IsGenericType then false
+    else
+      let typeDef = targetType.GetGenericTypeDefinition()
+      typeDef = typedefof<option<_>> || typeDef = typedefof<voption<_>>
+
   /// Splits the specified data record according to the specified fields.
   static member internal SplitOn(record: IList<string * objnull>, [<ParamArray>] fields: string array): ResizeArray<Dictionary<string, objnull>> =
     if fields.Length = 0 then
@@ -171,10 +178,3 @@ type Mapper private () =
     elif targetType = typeof<string> then if isNullable then null else ""
     elif Mapper.IsOptionType targetType then if isNullable then null else None
     else if isNullable then null else Activator.CreateInstance targetType
-
-  /// Returns a value indicating whether the specified type is `'T option` or `'T voption`.
-  static member private IsOptionType(targetType: Type): bool =
-    if not targetType.IsGenericType then false
-    else
-      let typeDef = targetType.GetGenericTypeDefinition()
-      typeDef = typedefof<option<_>> || typeDef = typedefof<voption<_>>
