@@ -23,10 +23,10 @@ module QueryFirstExtensions =
     /// Executes a parameterized SQL query and returns the first row.
     member this.AsyncQueryFirst<'T>(command: Command, ?parameters: ParameterCollection): Async<'T option> = async {
       let! cancellationToken = Async.CancellationToken
-      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
+      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.Await
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
-      use! reader = dbCommand.ExecuteReaderAsync cancellationToken |> Async.AwaitTask
-      let! ok = reader.ReadAsync cancellationToken |> Async.AwaitTask
+      use! reader = dbCommand.ExecuteReaderAsync cancellationToken |> Async.Await
+      let! ok = reader.ReadAsync cancellationToken |> Async.Await
       return if ok then Some (Mapper.Instance.CreateInstance<'T> reader) else None
     }
 

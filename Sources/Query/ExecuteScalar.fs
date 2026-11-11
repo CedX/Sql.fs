@@ -26,9 +26,9 @@ module QueryExecuteScalarExtensions =
     /// Returns the first column of the first row.
     member this.AsyncExecuteScalar<'T>(command: Command, ?parameters: ParameterCollection): Async<'T> = async {
       let! cancellationToken = Async.CancellationToken
-      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
+      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.Await
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
-      let! scalar = dbCommand.ExecuteScalarAsync cancellationToken |> Async.AwaitTask
+      let! scalar = dbCommand.ExecuteScalarAsync cancellationToken |> Async.Await
       return Mapper.Instance.ChangeType<'T>(scalar, isNullable = true)
     }
 

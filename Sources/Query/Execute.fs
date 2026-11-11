@@ -25,9 +25,9 @@ module QueryExecuteExtensions =
     /// Returns the number of rows affected.
     member this.AsyncExecute(command: Command, ?parameters: ParameterCollection): Async<int> = async {
       let! cancellationToken = Async.CancellationToken
-      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
+      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.Await
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
-      return! dbCommand.ExecuteNonQueryAsync cancellationToken |> Async.AwaitTask
+      return! dbCommand.ExecuteNonQueryAsync cancellationToken |> Async.Await
     }
 
     /// Executes a parameterized SQL statement.

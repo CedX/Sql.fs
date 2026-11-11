@@ -30,15 +30,15 @@ module QuerySingleExtensions =
     /// Executes a parameterized SQL query and returns the single row.
     member this.AsyncQuerySingle<'T>(command: Command, ?parameters: ParameterCollection): Async<'T option> = async {
       let! cancellationToken = Async.CancellationToken
-      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.AwaitTask
+      if this.State = ConnectionState.Closed then do! this.OpenAsync cancellationToken |> Async.Await
       use dbCommand = command.ToDbCommand(this, ?parameters = parameters) :?> DbCommand
-      use! reader = dbCommand.ExecuteReaderAsync cancellationToken |> Async.AwaitTask
+      use! reader = dbCommand.ExecuteReaderAsync cancellationToken |> Async.Await
 
       let mutable loop = true
       let mutable record: 'T option = None
       let mutable rowCount = 0
       while loop && rowCount <= 2 do
-        let! ok = reader.ReadAsync cancellationToken |> Async.AwaitTask
+        let! ok = reader.ReadAsync cancellationToken |> Async.Await
         loop <- ok
         if ok then
           if rowCount = 0 then record <- Some (Mapper.Instance.CreateInstance<'T> reader)

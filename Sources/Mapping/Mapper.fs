@@ -162,11 +162,11 @@ type Mapper private () =
     elif targetType.IsEnum then
       match value with
       | :? string as stringValue -> Enum.Parse(targetType, stringValue, ignoreCase = true)
-      | enumValue -> Enum.ToObject(targetType, Convert.ChangeType(enumValue, Enum.GetUnderlyingType targetType, CultureInfo.InvariantCulture) |> nonNull)
+      | enumValue -> Enum.ToObject(targetType, Convert.ChangeType(enumValue, Enum.GetUnderlyingType targetType, CultureInfo.InvariantCulture))
     elif Mapper.IsOptionType targetType then
       Mapper.CreateSome(targetType, Mapper.GetNonNullEquivalent(value, targetType.GenericTypeArguments[0]))
     else
-      Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture) |> nonNull
+      Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture)
 
   /// Gets the equivalent value of the specified type corresponding to a `NULL` value.
   static member private GetNullEquivalent(conversionType: Type, isNullable: bool): objnull =
