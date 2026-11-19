@@ -215,9 +215,7 @@ type CommandBuilder() =
       """
 
     let parameters =
-      fields
-      |> Seq.indexed
-      |> Seq.map (fun (index, field) -> Parameter(
+      fields |> Seq.mapi (fun index field -> Parameter(
         (if this.UsePositionalParameters then $"?{index + 1}" else this.GetParameterName field),
         this.GetParameterValue(entity, field)))
 
@@ -245,9 +243,7 @@ type CommandBuilder() =
       """
 
     let parameters =
-      fields
-      |> Seq.indexed
-      |> Seq.map (fun (index, field) -> Parameter(
+      fields |> Seq.mapi (fun index field -> Parameter(
         (if this.UsePositionalParameters then $"?{index + 1}" else this.GetParameterName field),
         this.GetParameterValue(entity, field)))
 

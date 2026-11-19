@@ -77,7 +77,7 @@ type ParameterCollection([<ParamArray>] parameters: Parameter array) =
 
   /// Creates a new parameter collection from the specified sequence of positional parameters.
   new(parameters: objnull seq) =
-    ParameterCollection(parameters |> Seq.indexed |> Seq.map(fun (index, value) -> Parameter($"?{index + 1}", value)) |> Array.ofSeq)
+    ParameterCollection(parameters |> Seq.mapi (fun index value -> Parameter($"?{index + 1}", value)) |> Array.ofSeq)
 
   /// Gets the parameter with the specified name.
   member this.Item with get(name: string) =
