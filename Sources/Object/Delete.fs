@@ -9,7 +9,7 @@ module ObjectDeleteExtensions =
 
   type IDbConnection with
     /// Deletes the specified entity.
-    /// Returns a value indicating whether the specified entity has been deleted.
+    /// Returns a value indicating whether the entity has been deleted.
     member this.Delete<'T when 'T: not null>(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): bool =
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetDeleteCommand<'T> entity
@@ -27,7 +27,7 @@ module ObjectDeleteExtensions =
 
   type DbConnection with
     /// Deletes the specified entity.
-    /// Returns a value indicating whether the specified entity has been deleted.
+    /// Returns a value indicating whether the entity has been deleted.
     member this.AsyncDelete<'T when 'T: not null>(entity: 'T, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<bool> = async {
       let builder = defaultArg builder (CommandBuilder.Create this)
       let command, parameters = builder.GetDeleteCommand<'T> entity
