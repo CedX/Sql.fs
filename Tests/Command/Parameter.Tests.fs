@@ -24,27 +24,22 @@ type ParameterTests() =
   [<TestMethod>]
   member _.Value() =
     Parameter("Name", null).Value |> Should.be DBNull.Value
-    // Parameter("Name", None).Value |> Should.be DBNull.Value
     Parameter("Name", DBNull.Value).Value |> Should.be DBNull.Value
 
     Parameter("Name", true).Value |> Should.be true
-    // Parameter("Name", Some true).Value |> Should.be true
     Parameter("Name", Nullable true).Value |> Should.be true
     Parameter("Name", Nullable<bool>()).Value |> Should.be DBNull.Value
 
     Parameter("Name", 123).Value |> Should.be 123
-    // Parameter("Name", Some 123).Value |> Should.be 123
     Parameter("Name", Nullable 123).Value |> Should.be 123
     Parameter("Name", Nullable<int>()).Value |> Should.be DBNull.Value
 
     Parameter("Name", DateTime.UnixEpoch).Value |> Should.be DateTime.UnixEpoch
-    // Parameter("Name", Some DateTime.UnixEpoch).Value |> Should.be DateTime.UnixEpoch
     Parameter("Name", Nullable DateTime.UnixEpoch).Value |> Should.be DateTime.UnixEpoch
     Parameter("Name", Nullable<DateTime>()).Value |> Should.be DBNull.Value
 
     Parameter("Name", "").Value |> Should.be ""
     Parameter("Name", "Foo").Value |> Should.be "Foo"
-    // Parameter("Name", Some "Foo").Value |> Should.be "Foo"
 
 /// Tests the features of the `ParameterCollection` class.
 [<TestClass>]

@@ -26,7 +26,7 @@ type TableInfo(entityType: Type) =
 
   /// The single identity column, if applicable.
   member val IdentityColumn: ColumnInfo option =
-    match columns.Values |> Seq.filter (fun column -> column.IsIdentity) |> Seq.tryExactlyOne with
+    match columns.Values |> Seq.filter _.IsIdentity |> Seq.tryExactlyOne with
     | Some column -> Some column
     | None ->
       match columns.TryGetValue "Id" with

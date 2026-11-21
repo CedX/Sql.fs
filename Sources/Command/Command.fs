@@ -160,7 +160,7 @@ type CommandBuilder() =
       | Some list when list.Length = 0 -> table.Columns.Values
       | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
-    let fields = ResizeArray(columns |> Seq.filter (fun column -> column.CanWrite) |> Seq.map (fun column -> column.Name))
+    let fields = ResizeArray(columns |> Seq.filter _.CanWrite |> Seq.map _.Name)
     if not (fields.Contains idColumn.Name) then fields.Add idColumn.Name
 
     let parameter = Parameter((if this.UsePositionalParameters then "?1" else this.GetParameterName idColumn), id)
@@ -183,7 +183,7 @@ type CommandBuilder() =
       | Some list when list.Length = 0 -> table.Columns.Values
       | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
-    let fields = ResizeArray(columns |> Seq.filter (fun column -> column.CanWrite) |> Seq.map (fun column -> column.Name))
+    let fields = ResizeArray(columns |> Seq.filter _.CanWrite |> Seq.map _.Name)
     if not (fields.Contains idColumn.Name) then fields.Add idColumn.Name
 
     let orderHints = defaultArg orderHints (OrderHintCollection())
