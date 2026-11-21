@@ -17,7 +17,7 @@ type ObjectDeleteExtensionsTests() =
   [<TestMethod>]
   member _.Delete() =
     let sql = "SELECT * FROM Characters WHERE ID = @Id"
-    let parameters = ParameterCollection (Parameter("Id", 1))
+    let parameters = [("Id", 1 :> objnull)]
     let record = connection.QuerySingle<Character>(sql, parameters) |> Option.get
     connection.Delete record |> Should.beTrue
     connection.Delete record |> Should.beFalse
@@ -32,7 +32,7 @@ type ObjectDeleteExtensionsTests() =
 
   // [<TestMethod>]
   member _.AsyncDelete(): Task = task {
-    let sql = "SELECT * FROM Characters WHERE ID = @Id"
+    let sql = Command "SELECT * FROM Characters WHERE ID = @Id"
     let parameters = ParameterCollection (Parameter("Id", 2))
     let! record = connection.AsyncQuerySingle<Character>(sql, parameters)
 
