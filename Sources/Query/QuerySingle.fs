@@ -23,8 +23,8 @@ module QuerySingleExtensions =
       if rowCount = 1 then record else None
 
     /// Executes a parameterized SQL query and returns the single row.
-    member this.QuerySingle<'T>(command: string, ?parameters: ParameterCollection): 'T option =
-      this.QuerySingle<'T>(Command command, ?parameters = parameters)
+    member this.QuerySingle<'T>(command: string, ?parameters: (string * objnull) seq): 'T option =
+      this.QuerySingle<'T>(Command command, ParameterCollection(defaultArg parameters Seq.empty))
 
   type DbConnection with
     /// Executes a parameterized SQL query and returns the single row.
@@ -48,5 +48,5 @@ module QuerySingleExtensions =
     }
 
     /// Executes a parameterized SQL query and returns the single row.
-    member this.AsyncQuerySingle<'T>(command: string, ?parameters: ParameterCollection): Async<'T option> =
-      this.AsyncQuerySingle<'T>(Command command, ?parameters = parameters)
+    member this.AsyncQuerySingle<'T>(command: string, ?parameters: (string * objnull) seq): Async<'T option> =
+      this.AsyncQuerySingle<'T>(Command command, ParameterCollection(defaultArg parameters Seq.empty))

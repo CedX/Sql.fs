@@ -59,6 +59,17 @@ type ParameterCollectionTests() =
     parameter.Value |> Should.be "Unique"
     parameter.DbType |> Should.be (Some DbType.AnsiString)
 
+    // It should create a collection from a sequence of parameter-like arguments.
+    let collection = ParameterCollection ["Key", "Foo" :> objnull; "Value", 123; "Options", true]
+    collection.Count |> Should.be 3
+    collection |> Seq.map _.Name |> Should.beSequence ["@Key"; "@Value"; "@Options"]
+    collection |> Seq.map _.Value |> Should.beSequence ["Foo"; 123; true]
+
+    let collection = ParameterCollection [| "Foo" :> objnull; 123; true |]
+    collection.Count |> Should.be 3
+    collection |> Seq.map _.Name |> Should.beSequence ["?1"; "?2"; "?3"]
+    collection |> Seq.map _.Value |> Should.beSequence ["Foo"; 123; true]
+
   [<TestMethod>]
   member _.Indexer() =
     let collection = ParameterCollection ["?1", 123 :> objnull; "@Key", "Unique"]

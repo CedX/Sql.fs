@@ -17,28 +17,28 @@ type QueryExecuteScalarExtensionsTests() =
   [<TestMethod>]
   member _.ExecuteScalar() =
     let sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender"
-    let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Balrog))
+    let parameters = [("Gender", nameof CharacterGender.Balrog :> objnull)]
     connection.ExecuteScalar<int>(sql, parameters) |> Should.be 2
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name"
-    let parameters = ParameterCollection ["Name", "Characters" :> objnull; "Type", "table"]
+    let parameters = ["Name", "Characters" :> objnull; "Type", "table"]
     connection.ExecuteScalar<string>(sql, parameters) |> Should.be "Characters"
 
     let sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name"
-    let parameters = ParameterCollection (Parameter("Name", "FooBarBazQux"))
+    let parameters = [("Name", "FooBarBazQux" :> objnull)]
     connection.ExecuteScalar(sql, parameters) |> Should.beNull
 
   // [<TestMethod>]
   member _.AsyncExecuteScalar(): Task = task {
-    let sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender"
+    let sql = Command "SELECT COUNT(*) FROM Characters WHERE gender = @Gender"
     let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Balrog))
     do! connection.AsyncExecuteScalar<int>(sql, parameters) |> AsyncShould.be 2
 
-    let sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name"
+    let sql = Command "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name"
     let parameters = ParameterCollection ["Name", "Characters" :> objnull; "Type", "table"]
     do! connection.AsyncExecuteScalar<string>(sql, parameters) |> AsyncShould.be "Characters"
 
-    let sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name"
+    let sql = Command "SELECT tbl_name FROM sqlite_schema WHERE name = @Name"
     let parameters = ParameterCollection (Parameter("Name", "FooBarBazQux"))
     do! connection.AsyncExecuteScalar(sql, parameters) |> AsyncShould.beNull
   }

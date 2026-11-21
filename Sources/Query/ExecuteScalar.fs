@@ -18,8 +18,8 @@ module QueryExecuteScalarExtensions =
 
     /// Executes a parameterized SQL query that selects a single value.
     /// Returns the first column of the first row.
-    member this.ExecuteScalar<'T>(command: string, ?parameters: ParameterCollection): 'T =
-      this.ExecuteScalar<'T>(Command command, ?parameters = parameters)
+    member this.ExecuteScalar<'T>(command: string, ?parameters: (string * objnull) seq): 'T =
+      this.ExecuteScalar<'T>(Command command, ParameterCollection(defaultArg parameters Seq.empty))
 
   type DbConnection with
     /// Executes a parameterized SQL query that selects a single value.
@@ -34,5 +34,5 @@ module QueryExecuteScalarExtensions =
 
     /// Executes a parameterized SQL query that selects a single value.
     /// Returns the first column of the first row.
-    member this.AsyncExecuteScalar<'T>(command: string, ?parameters: ParameterCollection): Async<'T> =
-      this.AsyncExecuteScalar<'T>(Command command, ?parameters = parameters)
+    member this.AsyncExecuteScalar<'T>(command: string, ?parameters: (string * objnull) seq): Async<'T> =
+      this.AsyncExecuteScalar<'T>(Command command, ParameterCollection(defaultArg parameters Seq.empty))

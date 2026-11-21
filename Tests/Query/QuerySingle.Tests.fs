@@ -18,7 +18,7 @@ type QuerySingleExtensionsTests() =
   member _.QuerySingle() =
     // It should return the single record produced by the SQL query.
     let sql = "SELECT * FROM Characters WHERE fullName = @FullName"
-    let parameters = ParameterCollection (Parameter("FullName", "Saruman"))
+    let parameters = [("FullName", "Saruman" :> objnull)]
     let record = connection.QuerySingle<Character>(sql, parameters)
 
     match record with
@@ -28,18 +28,18 @@ type QuerySingleExtensionsTests() =
       character.Gender |> Should.be CharacterGender.Istari
 
     // It should return `None` if the query produces no results.
-    let parameters = ParameterCollection (Parameter("FullName", "Cédric"))
+    let parameters = [("FullName", "Cédric" :> objnull)]
     connection.QuerySingle<Character>(sql, parameters) |> Should.be None
 
     // It should return `None` if the query produces more than one result.
     let sql = "SELECT * FROM Characters WHERE gender = @Gender"
-    let parameters = ParameterCollection (Parameter("Gender", CharacterGender.Human))
+    let parameters = [("Gender", CharacterGender.Human :> objnull)]
     connection.QuerySingle<Character>(sql, parameters) |> Should.be None
 
   [<TestMethod>]
   member _.AsyncQuerySingle(): Task = task {
     // It should return the single record produced by the SQL query.
-    let sql = "SELECT * FROM Characters WHERE fullName = @FullName"
+    let sql = Command "SELECT * FROM Characters WHERE fullName = @FullName"
     let parameters = ParameterCollection (Parameter("FullName", "Saruman"))
     let! record = connection.AsyncQuerySingle<Character>(sql, parameters)
 
@@ -54,7 +54,7 @@ type QuerySingleExtensionsTests() =
     do! connection.AsyncQuerySingle<Character>(sql, parameters) |> AsyncShould.be None
 
     // It should return `None` if the query produces more than one result.
-    let sql = "SELECT * FROM Characters WHERE gender = @Gender"
+    let sql = Command "SELECT * FROM Characters WHERE gender = @Gender"
     let parameters = ParameterCollection (Parameter("Gender", CharacterGender.Human))
     do! connection.AsyncQuerySingle<Character>(sql, parameters) |> AsyncShould.be None
   }

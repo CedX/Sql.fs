@@ -17,8 +17,8 @@ module QueryExecuteExtensions =
 
     /// Executes a parameterized SQL statement.
     /// Returns the number of rows affected.
-    member this.Execute(command: string, ?parameters: ParameterCollection): int =
-      this.Execute(Command command, ?parameters = parameters)
+    member this.Execute(command: string, ?parameters: (string * objnull) seq): int =
+      this.Execute(Command command, ParameterCollection(defaultArg parameters Seq.empty))
 
   type DbConnection with
     /// Executes a parameterized SQL statement.
@@ -32,5 +32,5 @@ module QueryExecuteExtensions =
 
     /// Executes a parameterized SQL statement.
     /// Returns the number of rows affected.
-    member this.AsyncExecute(command: string, ?parameters: ParameterCollection): Async<int> =
-      this.AsyncExecute(Command command, ?parameters = parameters)
+    member this.AsyncExecute(command: string, ?parameters: (string * objnull) seq): Async<int> =
+      this.AsyncExecute(Command command, ParameterCollection(defaultArg parameters Seq.empty))

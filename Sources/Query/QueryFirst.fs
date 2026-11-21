@@ -16,8 +16,8 @@ module QueryFirstExtensions =
       if reader.Read() then Some (Mapper.Instance.CreateInstance<'T> reader) else None
 
     /// Executes a parameterized SQL query and returns the first row.
-    member this.QueryFirst<'T>(command: string, ?parameters: ParameterCollection): 'T option =
-      this.QueryFirst<'T>(Command command, ?parameters = parameters)
+    member this.QueryFirst<'T>(command: string, ?parameters: (string * objnull) seq): 'T option =
+      this.QueryFirst<'T>(Command command, ParameterCollection(defaultArg parameters Seq.empty))
 
   type DbConnection with
     /// Executes a parameterized SQL query and returns the first row.
@@ -31,5 +31,5 @@ module QueryFirstExtensions =
     }
 
     /// Executes a parameterized SQL query and returns the first row.
-    member this.AsyncQueryFirst<'T>(command: string, ?parameters: ParameterCollection): Async<'T option> =
-      this.AsyncQueryFirst<'T>(Command command, ?parameters = parameters)
+    member this.AsyncQueryFirst<'T>(command: string, ?parameters: (string * objnull) seq): Async<'T option> =
+      this.AsyncQueryFirst<'T>(Command command, ParameterCollection(defaultArg parameters Seq.empty))

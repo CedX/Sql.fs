@@ -16,12 +16,12 @@ type QueryExecuteExtensionsTests() =
 
   [<TestMethod>]
   member _.Execute() =
-    let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Balrog))
+    let parameters = [("Gender", nameof CharacterGender.Balrog :> objnull)]
     connection.ExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> Should.be 16
     connection.Execute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> Should.be 2
     connection.ExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> Should.be 14
 
-    let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Elf))
+    let parameters = [("Gender", nameof CharacterGender.Elf :> objnull)]
     connection.Execute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> Should.be 3
     connection.ExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> Should.be 11
 
@@ -29,10 +29,10 @@ type QueryExecuteExtensionsTests() =
   member _.AsyncExecute(): Task = task {
     let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Balrog))
     do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> AsyncShould.be 16
-    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> AsyncShould.be 2
+    do! connection.AsyncExecute(Command "DELETE FROM Characters WHERE gender = @Gender", parameters) |> AsyncShould.be 2
     do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> AsyncShould.be 14
 
     let parameters = ParameterCollection (Parameter("Gender", nameof CharacterGender.Elf))
-    do! connection.AsyncExecute("DELETE FROM Characters WHERE gender = @Gender", parameters) |> AsyncShould.be 3
+    do! connection.AsyncExecute(Command "DELETE FROM Characters WHERE gender = @Gender", parameters) |> AsyncShould.be 3
     do! connection.AsyncExecuteScalar<int> "SELECT COUNT(*) FROM Characters" |> AsyncShould.be 11
   }
