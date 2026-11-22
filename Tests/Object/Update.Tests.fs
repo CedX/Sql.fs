@@ -20,7 +20,7 @@ type ObjectUpdateExtensionsTests() =
     let sql = "SELECT * FROM Characters WHERE firstName = 'Sauron'"
 
     let sauron = connection.QuerySingle<Character> sql |> Option.get
-    sauron.FullName |> Should.be (Some "Sauron")
+    sauron.FullName |> Should.be "Sauron"
     sauron.Gender |> Should.be CharacterGender.DarkLord
 
     sauron.LastName <- "The big bad guy"
@@ -28,14 +28,14 @@ type ObjectUpdateExtensionsTests() =
     connection.Update sauron |> Should.be 1
 
     let sauron = connection.QuerySingle<Character> sql |> Option.get
-    sauron.FullName |> Should.be (Some "Sauron The big bad guy")
+    sauron.FullName |> Should.be "Sauron The big bad guy"
     sauron.Gender |> Should.be CharacterGender.Istari
 
     // It should allow updating a specific set of columns.
     let sql = "SELECT * FROM Characters WHERE firstName = 'Saruman'"
 
     let saruman = connection.QuerySingle<Character> sql |> Option.get
-    saruman.FullName |> Should.be (Some "Saruman")
+    saruman.FullName |> Should.be "Saruman"
     saruman.Gender |> Should.be CharacterGender.Istari
 
     saruman.LastName <- "The traitor"
@@ -43,7 +43,7 @@ type ObjectUpdateExtensionsTests() =
     connection.Update(saruman, [| "gender" |]) |> Should.be 1
 
     let saruman = connection.QuerySingle<Character> sql |> Option.get
-    saruman.FullName |> Should.be (Some "Saruman")
+    saruman.FullName |> Should.be "Saruman"
     saruman.Gender |> Should.be CharacterGender.DarkLord
 
   [<TestMethod>]
@@ -53,7 +53,7 @@ type ObjectUpdateExtensionsTests() =
 
     let! sauron = connection.AsyncQuerySingle<Character> sql
     let sauron = Option.get sauron
-    sauron.FullName |> Should.be (Some "Sauron")
+    sauron.FullName |> Should.be "Sauron"
     sauron.Gender |> Should.be CharacterGender.DarkLord
 
     sauron.LastName <- "The big bad guy"
@@ -62,7 +62,7 @@ type ObjectUpdateExtensionsTests() =
 
     let! sauron = connection.AsyncQuerySingle<Character> sql
     let sauron = Option.get sauron
-    sauron.FullName |> Should.be (Some "Sauron The big bad guy")
+    sauron.FullName |> Should.be "Sauron The big bad guy"
     sauron.Gender |> Should.be CharacterGender.Istari
 
     // It should allow updating a specific set of columns.
@@ -70,7 +70,7 @@ type ObjectUpdateExtensionsTests() =
 
     let! saruman = connection.AsyncQuerySingle<Character> sql
     let saruman = Option.get saruman
-    saruman.FullName |> Should.be (Some "Saruman")
+    saruman.FullName |> Should.be "Saruman"
     saruman.Gender |> Should.be CharacterGender.Istari
 
     saruman.LastName <- "The traitor"
@@ -79,6 +79,6 @@ type ObjectUpdateExtensionsTests() =
 
     let! saruman = connection.AsyncQuerySingle<Character> sql
     let saruman = Option.get saruman
-    saruman.FullName |> Should.be (Some "Saruman")
+    saruman.FullName |> Should.be "Saruman"
     saruman.Gender |> Should.be CharacterGender.DarkLord
   }

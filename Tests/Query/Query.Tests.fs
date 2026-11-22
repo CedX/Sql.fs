@@ -23,11 +23,11 @@ type DbConnectionExtensionsTests() =
     records.Length |> Should.be 3
 
     let elrond = List.head records
-    elrond.FullName |> Should.be (Some "Elrond")
+    elrond.FullName |> Should.be "Elrond"
     elrond.Gender |> Should.be CharacterGender.Elf
 
     let galadriel = records[1]
-    galadriel.FullName |> Should.be (Some "Galadriel")
+    galadriel.FullName |> Should.be "Galadriel"
     galadriel.Gender |> Should.be CharacterGender.Elf
 
     // It should allow the data rows to be split into distinct objects.
@@ -55,11 +55,11 @@ type DbConnectionExtensionsTests() =
     records.Length |> Should.be 3
 
     let elrond = List.head records
-    elrond.FullName |> Should.be (Some "Elrond")
+    elrond.FullName |> Should.be "Elrond"
     elrond.Gender |> Should.be CharacterGender.Elf
 
     let galadriel = records[1]
-    galadriel.FullName |> Should.be (Some "Galadriel")
+    galadriel.FullName |> Should.be "Galadriel"
     galadriel.Gender |> Should.be CharacterGender.Elf
 
     // It should allow the data rows to be split into distinct objects.

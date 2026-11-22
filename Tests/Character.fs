@@ -23,7 +23,7 @@ type Character =
 
     /// The full name.
     [<Column "fullName"; DatabaseGenerated(DatabaseGeneratedOption.Computed)>]
-    FullName: string option
+    FullName: string | null
 
     /// The character's gender.
     [<Column("gender", TypeName = nameof(DbType.AnsiString))>]
@@ -41,7 +41,7 @@ type Character =
   /// Creates a new instance with default values.
   static member Default = {
     FirstName = ""
-    FullName = None
+    FullName = null
     Gender = CharacterGender.Human
     Id = 0
     LastName = ""

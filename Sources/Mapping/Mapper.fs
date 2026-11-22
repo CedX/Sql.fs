@@ -1,7 +1,6 @@
 namespace Belin.Sql
 // fsharplint:disable MaxCharactersOnLine
 
-open Microsoft.FSharp.Reflection
 open System
 open System.Collections.Concurrent
 open System.Collections.Generic
@@ -111,13 +110,6 @@ type Mapper private () =
   static member internal IsNullRecord(dictionary: IDictionary<string, objnull>) =
     dictionary.Values |> Seq.forall isNull
 
-  /// Returns a value indicating whether the specified type is `'T option` or `'T voption`.
-  static member internal IsOptionType(targetType: Type): bool =
-    if not targetType.IsGenericType then false
-    else
-      let typeDef = targetType.GetGenericTypeDefinition()
-      typeDef = typedefof<option<_>> || typeDef = typedefof<voption<_>>
-
   /// Splits the specified data record according to the specified fields.
   static member internal SplitOn(record: IList<string * objnull>, [<ParamArray>] fields: string array): ResizeArray<Dictionary<string, objnull>> =
     if fields.Length = 0 then
@@ -149,11 +141,6 @@ type Mapper private () =
       properties.Add((record.GetName index, if Convert.IsDBNull value then null else value))
     Mapper.SplitOn(properties, fields)
 
-  /// Creates a `Some` option of the specified type for the given value.
-  static member private CreateSome(optionType: Type, value: obj): obj =
-    let someCase = FSharpType.GetUnionCases optionType |> Array.find (fun unionCase -> unionCase.Name = "Some")
-    FSharpValue.MakeUnion(someCase, [| value |]) |> nonNull
-
   /// Gets the equivalent value of the specified type corresponding to a given non-`NULL` value.
   static member private GetNonNullEquivalent(value: obj, conversionType: Type): obj =
     let targetType = Nullable.GetUnderlyingType conversionType |> defaultIfNull conversionType
@@ -163,8 +150,6 @@ type Mapper private () =
       match value with
       | :? string as stringValue -> Enum.Parse(targetType, stringValue, ignoreCase = true)
       | enumValue -> Enum.ToObject(targetType, Convert.ChangeType(enumValue, Enum.GetUnderlyingType targetType, CultureInfo.InvariantCulture))
-    elif Mapper.IsOptionType targetType then
-      Mapper.CreateSome(targetType, Mapper.GetNonNullEquivalent(value, targetType.GenericTypeArguments[0]))
     else
       Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture)
 
@@ -176,5 +161,4 @@ type Mapper private () =
     if not (isNull nullableType) then null
     elif targetType.IsValueType then RuntimeHelpers.GetUninitializedObject targetType
     elif targetType = typeof<string> then if isNullable then null else ""
-    elif Mapper.IsOptionType targetType then if isNullable then null else None
     else if isNullable then null else Activator.CreateInstance targetType

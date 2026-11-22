@@ -67,7 +67,7 @@ type ColumnInfoTests() =
 
   [<TestMethod>]
   [<DataRow("FirstName", typeof<string>)>]
-  [<DataRow("FullName", typeof<string option>)>]
+  [<DataRow("FullName", typeof<string>)>]
   [<DataRow("Gender", typeof<CharacterGender>)>]
   [<DataRow("Id", typeof<int>)>]
   member _.PropertyType(name: string, expected: Type) =

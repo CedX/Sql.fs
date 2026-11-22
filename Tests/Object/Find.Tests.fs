@@ -22,28 +22,28 @@ type ObjectFindExtensionsTests() =
     | None -> Should.beFalse record.IsNone
     | Some character ->
       character.Id |> Should.be 2
-      character.FullName |> Should.be (Some "Balin")
+      character.FullName |> Should.be "Balin"
 
     let record = connection.Find<Character> 14
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
       character.Id |> Should.be 14
-      character.FullName |> Should.be (Some "Sam Gamgee")
+      character.FullName |> Should.be "Sam Gamgee"
 
     // It should allow selecting a specific set of columns.
     let record = connection.Find<Character>(2, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.be None
+      character.FullName |> Should.beNull
       character.Gender |> Should.be CharacterGender.Dwarf
 
     let record = connection.Find<Character>(14, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.be None
+      character.FullName |> Should.beNull
       character.Gender |> Should.be CharacterGender.Hobbit
 
     // It should return `None` if the record is not found.
@@ -57,28 +57,28 @@ type ObjectFindExtensionsTests() =
     | None -> Should.beFalse record.IsNone
     | Some character ->
       character.Id |> Should.be 2
-      character.FullName |> Should.be (Some "Balin")
+      character.FullName |> Should.be "Balin"
 
     let! record = connection.AsyncFind<Character> 14
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
       character.Id |> Should.be 14
-      character.FullName |> Should.be (Some "Sam Gamgee")
+      character.FullName |> Should.be "Sam Gamgee"
 
     // It should allow selecting a specific set of columns.
     let! record = connection.AsyncFind<Character>(2, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.be None
+      character.FullName |> Should.beNull
       character.Gender |> Should.be CharacterGender.Dwarf
 
     let! record = connection.AsyncFind<Character>(14, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.be None
+      character.FullName |> Should.beNull
       character.Gender |> Should.be CharacterGender.Hobbit
 
     // It should return `None` if the record is not found.
@@ -91,26 +91,26 @@ type ObjectFindExtensionsTests() =
     let records = connection.FindAll<Character>()
     records.Length |> Should.be 16
     records[0].Id |> Should.be 1
-    records[0].FullName |> Should.be (Some "Aragorn")
+    records[0].FullName |> Should.be "Aragorn"
     records[15].Id |> Should.be 16
-    records[15].FullName |> Should.be (Some "Sauron")
+    records[15].FullName |> Should.be "Sauron"
 
     // It should allow sorting the results by a specific set of columns.
     let records = connection.FindAll<Character>(OrderHintCollection ["gender", Ascending; "fullName", Descending])
     records.Length |> Should.be 16
     records[0].Id |> Should.be 11
-    records[0].FullName |> Should.be (Some "Gothmog")
+    records[0].FullName |> Should.be "Gothmog"
     records[15].Id |> Should.be 8
-    records[15].FullName |> Should.be (Some "Gandalf")
+    records[15].FullName |> Should.be "Gandalf"
 
     // It should allow selecting a specific set of columns.
     let records = connection.FindAll<Character>(columns = [| "gender" |])
     records[0].Id |> Should.be 1
     records[0].Gender |> Should.be CharacterGender.Human
-    records[0].FullName |> Should.be None
+    records[0].FullName |> Should.beNull
     records[15].Id |> Should.be 16
     records[15].Gender |> Should.be CharacterGender.DarkLord
-    records[15].FullName |> Should.be None
+    records[15].FullName |> Should.beNull
 
   [<TestMethod>]
   member _.AsyncFindAll(): Task = task {
@@ -118,24 +118,24 @@ type ObjectFindExtensionsTests() =
     let! records = connection.AsyncFindAll<Character>()
     records.Length |> Should.be 16
     records[0].Id |> Should.be 1
-    records[0].FullName |> Should.be (Some "Aragorn")
+    records[0].FullName |> Should.be "Aragorn"
     records[15].Id |> Should.be 16
-    records[15].FullName |> Should.be (Some "Sauron")
+    records[15].FullName |> Should.be "Sauron"
 
     // It should allow sorting the results by a specific set of columns.
     let! records = connection.AsyncFindAll<Character>(OrderHintCollection ["gender", Ascending; "fullName", Descending])
     records.Length |> Should.be 16
     records[0].Id |> Should.be 11
-    records[0].FullName |> Should.be (Some "Gothmog")
+    records[0].FullName |> Should.be "Gothmog"
     records[15].Id |> Should.be 8
-    records[15].FullName |> Should.be (Some "Gandalf")
+    records[15].FullName |> Should.be "Gandalf"
 
     // It should allow selecting a specific set of columns.
     let! records = connection.AsyncFindAll<Character>(columns = [| "gender" |])
     records[0].Id |> Should.be 1
     records[0].Gender |> Should.be CharacterGender.Human
-    records[0].FullName |> Should.be None
+    records[0].FullName |> Should.beNull
     records[15].Id |> Should.be 16
     records[15].Gender |> Should.be CharacterGender.DarkLord
-    records[15].FullName |> Should.be None
+    records[15].FullName |> Should.beNull
   }

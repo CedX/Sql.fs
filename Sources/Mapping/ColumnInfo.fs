@@ -15,62 +15,42 @@ type ColumnInfo(property: PropertyInfo) =
   /// The mapping between common .NET types and data types.
   static let typeMap = dict [
     typeof<Nullable<bool>>, DbType.Boolean
-    typeof<bool option>, DbType.Boolean
     typeof<bool>, DbType.Boolean
     typeof<Nullable<byte>>, DbType.Byte
-    typeof<byte option>, DbType.Byte
     typeof<byte>, DbType.Byte
-    typeof<byte array option>, DbType.Binary
     typeof<byte array>, DbType.Binary
     typeof<Nullable<char>>, DbType.StringFixedLength
-    typeof<char option>, DbType.StringFixedLength
     typeof<char>, DbType.StringFixedLength
     typeof<Nullable<DateOnly>>, DbType.Date
-    typeof<DateOnly option>, DbType.Date
     typeof<DateOnly>, DbType.Date
     typeof<Nullable<DateTime>>, DbType.DateTime
-    typeof<DateTime option>, DbType.DateTime
     typeof<DateTime>, DbType.DateTime
     typeof<Nullable<DateTimeOffset>>, DbType.DateTimeOffset
-    typeof<DateTimeOffset option>, DbType.DateTimeOffset
     typeof<DateTimeOffset>, DbType.DateTimeOffset
     typeof<Nullable<decimal>>, DbType.Decimal
-    typeof<decimal option>, DbType.Decimal
     typeof<decimal>, DbType.Decimal
     typeof<Nullable<double>>, DbType.Double
-    typeof<double option>, DbType.Double
     typeof<double>, DbType.Double
     typeof<Nullable<float>>, DbType.Single
-    typeof<float option>, DbType.Single
     typeof<float>, DbType.Single
     typeof<Nullable<Guid>>, DbType.Guid
-    typeof<Guid option>, DbType.Guid
     typeof<Guid>, DbType.Guid
     typeof<Nullable<int32>>, DbType.Int32
-    typeof<int32 option>, DbType.Int32
     typeof<int32>, DbType.Int32
     typeof<Nullable<int64>>, DbType.Int64
-    typeof<int64 option>, DbType.Int64
     typeof<int64>, DbType.Int64
     typeof<Nullable<sbyte>>, DbType.SByte
-    typeof<sbyte option>, DbType.SByte
     typeof<sbyte>, DbType.SByte
     typeof<Nullable<int16>>, DbType.Int16
-    typeof<int16 option>, DbType.Int16
     typeof<int16>, DbType.Int16
-    typeof<string option>, DbType.String
     typeof<string>, DbType.String
     typeof<Nullable<TimeOnly>>, DbType.Time
-    typeof<TimeOnly option>, DbType.Time
     typeof<TimeOnly>, DbType.Time
     typeof<Nullable<uint>>, DbType.UInt32
-    typeof<uint option>, DbType.UInt32
     typeof<uint>, DbType.UInt32
     typeof<Nullable<uint64>>, DbType.UInt64
-    typeof<uint64 option>, DbType.UInt64
     typeof<uint64>, DbType.UInt64
     typeof<Nullable<uint16>>, DbType.UInt16
-    typeof<uint16 option>, DbType.UInt16
     typeof<uint16>, DbType.UInt16
   ]
 

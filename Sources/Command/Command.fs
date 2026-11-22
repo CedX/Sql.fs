@@ -272,11 +272,10 @@ type CommandBuilder() =
 
   /// Returns the parameter value corresponding to the specified column.
   member private _.GetParameterValue(entity: obj, column: ColumnInfo): objnull =
-    let value = column.GetValue entity
-    match column.PropertyType with
-    | propertyType when propertyType.IsEnum && stringTypes |> Array.contains column.DbType -> string value
-    | propertyType when Mapper.IsOptionType propertyType -> Option.toObj (value :?> Option<obj>)
-    | _ -> value
+    match column.GetValue entity with
+    | null -> null
+    | value when column.PropertyType.IsEnum && stringTypes |> Array.contains column.DbType -> string value
+    | value -> value
 
   /// Returns the fully qualified name corresponding to the specified table.
   member private this.GetTableName(table: TableInfo): string =
