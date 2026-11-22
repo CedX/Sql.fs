@@ -60,8 +60,8 @@ type Parameter(name: string, ?value: objnull) =
   /// Normalizes the specified parameter value.
   static member internal NormalizeValue(value: objnull): obj =
     match value with
-    | null -> DBNull.Value
-    | nonNullValue -> nonNullValue
+    | Null -> DBNull.Value
+    | NonNull nonNullValue -> nonNullValue
 
 /// Collects all parameters relevant to a parameterized SQL statement.
 type ParameterCollection([<ParamArray>] parameters: Parameter array) =
@@ -83,8 +83,8 @@ type ParameterCollection([<ParamArray>] parameters: Parameter array) =
   member this.Item with get(name: string) =
     let normalizedName = Parameter.NormalizeName name
     match this.Find(fun parameter -> parameter.Name = normalizedName) with
-    | null -> raise (KeyNotFoundException normalizedName)
-    | parameter -> parameter
+    | Null -> raise (KeyNotFoundException normalizedName)
+    | NonNull parameter -> parameter
 
   /// Adds a new named parameter to the end of this collection.
   /// Returns the newly added parameter.

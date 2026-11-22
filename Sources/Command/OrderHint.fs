@@ -36,8 +36,8 @@ type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
   /// Gets the order hint with the specified column name.
   member this.Item with get(column: string) =
     match this.Find(fun orderHint -> orderHint.Column.Equals(column, StringComparison.OrdinalIgnoreCase)) with
-    | null -> raise (KeyNotFoundException column)
-    | orderHint -> orderHint
+    | Null -> raise (KeyNotFoundException column)
+    | NonNull orderHint -> orderHint
 
   /// Adds a new order hint to the end of this collection.
   /// Returns the newly added order hint.

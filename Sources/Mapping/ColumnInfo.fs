@@ -58,8 +58,8 @@ type ColumnInfo(property: PropertyInfo) =
   let column = property.GetCustomAttribute<ColumnAttribute>() |> defaultIfNull (ColumnAttribute property.Name)
   let databaseGeneratedOption =
     match property.GetCustomAttribute<DatabaseGeneratedAttribute>() with
-    | null -> DatabaseGeneratedOption.None
-    | databaseGenerated -> databaseGenerated.DatabaseGeneratedOption
+    | Null -> DatabaseGeneratedOption.None
+    | NonNull databaseGenerated -> databaseGenerated.DatabaseGeneratedOption
 
   /// Value indicating whether the column can be read.
   member _.CanRead: bool = property.CanRead
