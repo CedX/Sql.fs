@@ -21,7 +21,7 @@ type ObjectInsertExtensionsTests() =
 
     let record = { Character.Default with FirstName = "Cédric"; LastName = "Belin"; Gender = CharacterGender.Istari }
     record.Id |> Should.be 0
-    record.FullName |> Should.beNull
+    Should.beNull record.FullName
 
     let id = int (connection.Insert record)
     id |> Should.beGreaterThan 16
@@ -43,7 +43,7 @@ type ObjectInsertExtensionsTests() =
 
     let record = { Character.Default with FirstName = "Cédric"; LastName = "Belin"; Gender = CharacterGender.Istari }
     record.Id |> Should.be 0
-    record.FullName |> Should.beNull
+    Should.beNull record.FullName
 
     let! id = connection.AsyncInsert record
     let id = int id

@@ -36,14 +36,14 @@ type ObjectFindExtensionsTests() =
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.beNull
+      Should.beNull character.FullName
       character.Gender |> Should.be CharacterGender.Dwarf
 
     let record = connection.Find<Character>(14, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.beNull
+      Should.beNull character.FullName
       character.Gender |> Should.be CharacterGender.Hobbit
 
     // It should return `None` if the record is not found.
@@ -71,14 +71,14 @@ type ObjectFindExtensionsTests() =
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.beNull
+      Should.beNull character.FullName
       character.Gender |> Should.be CharacterGender.Dwarf
 
     let! record = connection.AsyncFind<Character>(14, [| "gender" |])
     match record with
     | None -> Should.beFalse record.IsNone
     | Some character ->
-      character.FullName |> Should.beNull
+      Should.beNull character.FullName
       character.Gender |> Should.be CharacterGender.Hobbit
 
     // It should return `None` if the record is not found.
@@ -107,10 +107,10 @@ type ObjectFindExtensionsTests() =
     let records = connection.FindAll<Character>(columns = [| "gender" |])
     records[0].Id |> Should.be 1
     records[0].Gender |> Should.be CharacterGender.Human
-    records[0].FullName |> Should.beNull
+    Should.beNull records[0].FullName
     records[15].Id |> Should.be 16
     records[15].Gender |> Should.be CharacterGender.DarkLord
-    records[15].FullName |> Should.beNull
+    Should.beNull records[15].FullName
 
   [<TestMethod>]
   member _.AsyncFindAll(): Task = task {
@@ -134,8 +134,8 @@ type ObjectFindExtensionsTests() =
     let! records = connection.AsyncFindAll<Character>(columns = [| "gender" |])
     records[0].Id |> Should.be 1
     records[0].Gender |> Should.be CharacterGender.Human
-    records[0].FullName |> Should.beNull
+    Should.beNull records[0].FullName
     records[15].Id |> Should.be 16
     records[15].Gender |> Should.be CharacterGender.DarkLord
-    records[15].FullName |> Should.beNull
+    Should.beNull records[15].FullName
   }
