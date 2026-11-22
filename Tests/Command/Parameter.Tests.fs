@@ -27,15 +27,15 @@ type ParameterTests() =
     Parameter("Name", DBNull.Value).Value |> Should.be DBNull.Value
 
     Parameter("Name", true).Value |> Should.be true
-    Parameter("Name", Nullable true).Value |> Should.be true
+    Parameter("Name", withNullV true).Value |> Should.be true
     Parameter("Name", Nullable<bool>()).Value |> Should.be DBNull.Value
 
     Parameter("Name", 123).Value |> Should.be 123
-    Parameter("Name", Nullable 123).Value |> Should.be 123
+    Parameter("Name", withNullV 123).Value |> Should.be 123
     Parameter("Name", Nullable<int>()).Value |> Should.be DBNull.Value
 
     Parameter("Name", DateTime.UnixEpoch).Value |> Should.be DateTime.UnixEpoch
-    Parameter("Name", Nullable DateTime.UnixEpoch).Value |> Should.be DateTime.UnixEpoch
+    Parameter("Name", withNullV DateTime.UnixEpoch).Value |> Should.be DateTime.UnixEpoch
     Parameter("Name", Nullable<DateTime>()).Value |> Should.be DBNull.Value
 
     Parameter("Name", "").Value |> Should.be ""
