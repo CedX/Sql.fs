@@ -23,7 +23,7 @@ type Character =
 
     /// The full name.
     [<Column "fullName"; DatabaseGenerated(DatabaseGeneratedOption.Computed)>]
-    FullName: string | null
+    FullName: string|null
 
     /// The character's gender.
     [<Column("gender", TypeName = nameof(DbType.AnsiString))>]
