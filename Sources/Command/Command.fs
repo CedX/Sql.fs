@@ -6,10 +6,10 @@ open System.Data.Common
 open System.Text.RegularExpressions
 
 /// Represents an SQL statement that is executed while connected to a data source.
-type Command(text: string) =
+type Command(?text: string) =
 
   /// The text of the SQL statement.
-  member val Text = text with get, set
+  member val Text = defaultArg text "" with get, set
 
   /// The wait time, in seconds, before terminating the attempt to execute the command and generating an error.
   member val Timeout = 30 with get, set
