@@ -157,7 +157,7 @@ type CommandBuilder() =
     let columns =
       match columns with
       | None -> table.Columns.Values
-      | Some list when list.Length = 0 -> table.Columns.Values
+      | Some list when Array.isEmpty list -> table.Columns.Values
       | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
     let fields = ResizeArray(columns |> Seq.filter _.CanWrite |> Seq.map _.Name)
@@ -180,7 +180,7 @@ type CommandBuilder() =
     let columns =
       match columns with
       | None -> table.Columns.Values
-      | Some list when list.Length = 0 -> table.Columns.Values
+      | Some list when Array.isEmpty list -> table.Columns.Values
       | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
     let fields = ResizeArray(columns |> Seq.filter _.CanWrite |> Seq.map _.Name)
@@ -229,7 +229,7 @@ type CommandBuilder() =
     let columns =
       match columns with
       | None -> table.Columns.Values
-      | Some list when list.Length = 0 -> table.Columns.Values
+      | Some list when Array.isEmpty list -> table.Columns.Values
       | Some list -> table.Columns.Values |> Seq.filter (fun column -> list |> Array.contains column.Name)
 
     let formatAssignment (field: ColumnInfo) =

@@ -112,7 +112,7 @@ type Mapper private () =
 
   /// Splits the specified data record according to the specified fields.
   static member internal SplitOn(record: IList<string * objnull>, [<ParamArray>] fields: string array): ResizeArray<Dictionary<string, objnull>> =
-    if fields.Length = 0 then
+    if Array.isEmpty fields then
       let properties = Dictionary<string, objnull> record.Count
       for key, value in record do properties.TryAdd(key, value) |> ignore<bool>
       ResizeArray [properties]
