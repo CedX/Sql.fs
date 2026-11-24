@@ -25,6 +25,14 @@ module ObjectFindExtensions =
       command.Transaction <- transaction
       this.Query<'T>(command, parameters)
 
+    /// Finds all entities of the specified type.
+    member this.FindAll<'T>(orderHints: (string * SortOrder) seq, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): 'T list =
+      this.FindAll<'T>(OrderHintCollection orderHints, ?columns = columns, ?timeout = timeout, ?transaction = transaction, ?builder = builder)
+
+    /// Finds all entities of the specified type.
+    member this.FindAll<'T>(orderHints: string seq, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): 'T list =
+      this.FindAll<'T>(OrderHintCollection orderHints, ?columns = columns, ?timeout = timeout, ?transaction = transaction, ?builder = builder)
+
   type DbConnection with
     /// Finds an entity with the specified primary key.
     member this.AsyncFind<'T>(id: obj, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<'T option> = async {
@@ -43,3 +51,11 @@ module ObjectFindExtensions =
       command.Transaction <- transaction
       return! this.AsyncQuery<'T>(command, parameters)
     }
+
+    /// Finds all entities of the specified type.
+    member this.AsyncFindAll<'T>(orderHints: (string * SortOrder) seq, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<'T list> =
+      this.AsyncFindAll<'T>(OrderHintCollection orderHints, ?columns = columns, ?timeout = timeout, ?transaction = transaction, ?builder = builder)
+
+    /// Finds all entities of the specified type.
+    member this.AsyncFindAll<'T>(orderHints: string seq, ?columns: string array, ?timeout: int, ?transaction: IDbTransaction, ?builder: CommandBuilder): Async<'T list> =
+      this.AsyncFindAll<'T>(OrderHintCollection orderHints, ?columns = columns, ?timeout = timeout, ?transaction = transaction, ?builder = builder)
