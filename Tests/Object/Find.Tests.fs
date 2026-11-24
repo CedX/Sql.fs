@@ -96,7 +96,7 @@ type ObjectFindExtensionsTests() =
     records[15].FullName |> Should.be "Sauron"
 
     // It should allow sorting the results by a specific set of columns.
-    let records = connection.FindAll<Character>(OrderHintCollection ["gender", Ascending; "fullName", Descending])
+    let records = connection.FindAll<Character> ["gender", Ascending; "fullName", Descending]
     records.Length |> Should.be 16
     records[0].Id |> Should.be 11
     records[0].FullName |> Should.be "Gothmog"
@@ -123,7 +123,7 @@ type ObjectFindExtensionsTests() =
     records[15].FullName |> Should.be "Sauron"
 
     // It should allow sorting the results by a specific set of columns.
-    let! records = connection.AsyncFindAll<Character>(OrderHintCollection ["gender", Ascending; "fullName", Descending])
+    let! records = connection.AsyncFindAll<Character> ["gender", Ascending; "fullName", Descending]
     records.Length |> Should.be 16
     records[0].Id |> Should.be 11
     records[0].FullName |> Should.be "Gothmog"
