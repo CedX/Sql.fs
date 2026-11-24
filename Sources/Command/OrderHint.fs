@@ -41,7 +41,7 @@ type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
 
   /// Adds a new order hint to the end of this collection.
   /// Returns the newly added order hint.
-  member this.AddOrderHint(column: string, ?sortOrder: SortOrder): OrderHint =
+  member this.Add(column: string, ?sortOrder: SortOrder): OrderHint =
     let orderHint = OrderHint(column, defaultArg sortOrder Ascending)
     this.Add orderHint
     orderHint

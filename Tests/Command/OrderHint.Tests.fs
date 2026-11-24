@@ -14,7 +14,7 @@ type OrderHintCollectionTests() =
     let collection = OrderHintCollection()
     Should.beEmpty collection
 
-    // It should create a collection from a single order order hint.
+    // It should create a collection from a single order hint.
     let collection = OrderHintCollection(OrderHint("ID", Descending))
     collection.Count |> Should.be 1
 
@@ -30,6 +30,17 @@ type OrderHintCollectionTests() =
     orderHint.Column |> Should.be "Name"
     orderHint.SortOrder |> Should.be Ascending
 
+    // It should create a collection from a sequence of order-like arguments.
+    let collection = OrderHintCollection ["FirstName", Ascending; "LastName", Descending]
+    collection.Count |> Should.be 2
+    collection |> Seq.map _.Column |> Should.beSequence ["FirstName"; "LastName"]
+    collection |> Seq.map _.SortOrder |> Should.beSequence [Ascending; Descending]
+
+    let collection = OrderHintCollection [| "FirstName"; "LastName" |]
+    collection.Count |> Should.be 2
+    collection |> Seq.map _.Column |> Should.beSequence ["FirstName"; "LastName"]
+    collection |> Seq.map _.SortOrder |> Should.beSequence [Ascending; Ascending]
+
   [<TestMethod>]
   member _.Indexer() =
     let collection = OrderHintCollection ["ID", Descending; "Name", Ascending]
@@ -44,16 +55,16 @@ type OrderHintCollectionTests() =
     Should.throw<KeyNotFoundException> (fun () -> collection["foo"] |> ignore<OrderHint>)
 
   [<TestMethod>]
-  member _.AddOrderHint() =
+  member _.Add() =
     let collection = OrderHintCollection()
     Should.beEmpty collection
 
-    let parameter = collection.AddOrderHint("Name1", Descending)
+    let parameter = collection.Add("Name1", Descending)
     collection.Count |> Should.be 1
     parameter.Column |> Should.be "Name1"
     parameter.SortOrder |> Should.be Descending
 
-    let parameter = collection.AddOrderHint "Name2"
+    let parameter = collection.Add "Name2"
     collection.Count |> Should.be 2
     parameter.Column |> Should.be "Name2"
     parameter.SortOrder |> Should.be Ascending
