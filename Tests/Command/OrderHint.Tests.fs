@@ -15,7 +15,7 @@ type OrderHintCollectionTests() =
     Should.beEmpty collection
 
     // It should create a collection from a single order hint.
-    let collection = OrderHintCollection(OrderHint("ID", Descending))
+    let collection = OrderHintCollection { Column = "ID"; SortOrder = Descending }
     collection.Count |> Should.be 1
 
     let orderHint = Seq.head collection
@@ -23,7 +23,7 @@ type OrderHintCollectionTests() =
     orderHint.SortOrder |> Should.be Descending
 
     // It should create a collection from a list of order hints.
-    let collection = OrderHintCollection(OrderHint("ID", Descending), OrderHint("Name", Ascending))
+    let collection = OrderHintCollection({ Column = "ID"; SortOrder = Descending }, { Column = "Name"; SortOrder = Ascending})
     collection.Count |> Should.be 2
 
     let orderHint = Seq.last collection
@@ -71,7 +71,7 @@ type OrderHintCollectionTests() =
 
   [<TestMethod>]
   member _.Contains() =
-    let collection = OrderHintCollection(OrderHint("Key", Ascending))
+    let collection = OrderHintCollection { Column = "Key"; SortOrder = Ascending }
     collection.Contains "key" |> Should.beTrue
     collection.Contains "KEY" |> Should.beTrue
     collection.Contains "foo" |> Should.beFalse
@@ -82,6 +82,15 @@ type OrderHintCollectionTests() =
     collection.IndexOf "id" |> Should.be 0
     collection.IndexOf "name" |> Should.be 1
     collection.IndexOf "foo" |> Should.be -1
+
+  [<TestMethod>]
+  member _.Parse() =
+    // It should return an empty sort for an empty string.
+    OrderHintCollection.Parse "" |> Should.beEmpty
+
+    // It should return an ascending direction for a property without prefix, a descending direction for a property with a "-" prefix.
+    let expected = OrderHintCollection ["foo", Ascending; "bar", Descending]
+    OrderHintCollection.Parse "foo,-bar" |> Should.beSequence expected
 
   [<TestMethod>]
   member _.RemoveAt() =
@@ -96,3 +105,14 @@ type OrderHintCollectionTests() =
     // It should throw an error if the specified column does not exist.
     let collection = OrderHintCollection ["ID", Descending; "Name", Ascending]
     Should.throw<KeyNotFoundException> (fun () -> collection.RemoveAt "Foo")
+
+  [<TestMethod>]
+  member _.TestToString() =
+    // It should return an empty string for an empty sort.
+    OrderHintCollection() |> string |> Should.beEmpty
+
+    // It should return the property for an ascending direction.
+    OrderHintCollection [("foo", Ascending)]|> string |> Should.be "foo"
+
+    // It should return the property with a "-" prefix for a descending direction.
+    OrderHintCollection.Parse "foo,-bar" |> string |> Should.be "foo,-bar"

@@ -9,13 +9,14 @@ type SortOrder =
   | Descending
 
 /// Defines the sort order for a database column.
-type OrderHint(column: string, ?sortOrder: SortOrder) =
+type OrderHint = {
 
   /// The name of the column for which the hint is being provided.
-  member val Column: string = column with get, set
+  Column: string
 
   /// The sort order of the column.
-  member val SortOrder: SortOrder = defaultArg sortOrder Ascending with get, set
+  SortOrder: SortOrder
+}
 
 /// A collection of hints describing the sort order of columns.
 type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
@@ -27,11 +28,11 @@ type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
 
   /// Creates a new order hint collection from the specified sequence of order hints.
   new(orderHints: (string * SortOrder) seq) =
-    OrderHintCollection(orderHints |> Seq.map(fun (column, sortOrder) -> OrderHint(column, sortOrder)) |> Array.ofSeq)
+    OrderHintCollection(orderHints |> Seq.map(fun (column, sortOrder) -> { Column = column; SortOrder = sortOrder }) |> Array.ofSeq)
 
   /// Creates a new order hint collection from the specified sequence of column names.
   new(columns: string seq) =
-    OrderHintCollection(columns |> Seq.map(fun column -> OrderHint(column, Ascending)) |> Array.ofSeq)
+    OrderHintCollection(columns |> Seq.map(fun column -> { Column = column; SortOrder = Ascending }) |> Array.ofSeq)
 
   /// Gets the order hint with the specified column name.
   member this.Item with get(column: string) =
@@ -42,7 +43,7 @@ type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
   /// Adds a new order hint to the end of this collection.
   /// Returns the newly added order hint.
   member this.Add(column: string, ?sortOrder: SortOrder): OrderHint =
-    let orderHint = OrderHint(column, defaultArg sortOrder Ascending)
+    let orderHint = { Column = column; SortOrder = defaultArg sortOrder Ascending }
     this.Add orderHint
     orderHint
 
@@ -54,7 +55,22 @@ type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
   member this.IndexOf(column: string): int =
     this.FindIndex(fun orderHint -> orderHint.Column.Equals(column, StringComparison.OrdinalIgnoreCase))
 
+  /// Creates a new collection from the specified string.
+  static member Parse(value: string): OrderHintCollection =
+    if value.Length > 0 then value.Split ',' else [||]
+    |> Array.map (fun token ->
+      let sortOrder = if token.StartsWith '-' then Descending else Ascending
+      let column = if sortOrder = Descending then token[1..] else token
+      { Column = column; SortOrder = sortOrder })
+    |> OrderHintCollection
+
   /// Removes the order hint with the specified column name from this collection.
   member this.RemoveAt(column: string) =
     try this.IndexOf column |> this.RemoveAt
     with :? ArgumentOutOfRangeException as ex -> raise (KeyNotFoundException(column, ex))
+
+  /// Returns a string representation of this object.
+  override this.ToString() =
+    this
+    |> Seq.map (fun orderHint -> $"""{if orderHint.SortOrder = Descending then "-" else ""}{orderHint.Column}""")
+    |> String.concat ","
