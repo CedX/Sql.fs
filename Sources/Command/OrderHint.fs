@@ -2,6 +2,7 @@ namespace Belin.Sql
 
 open System
 open System.Collections.Generic
+open System.Text.RegularExpressions
 
 /// Specifies how rows of data are sorted.
 type SortOrder =
@@ -21,6 +22,9 @@ type OrderHint = {
 /// A collection of hints describing the sort order of columns.
 type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
   inherit ResizeArray<OrderHint>(orderHints)
+
+  /// The regular expression used to remove the sort order.
+  static let sortOrderPattern = Regex(@" (ASC|DESC)$", RegexOptions.IgnoreCase)
 
   /// Creates a new order hint collection from the specified sequence of order hints.
   new(orderHints: OrderHint seq) =
@@ -57,10 +61,10 @@ type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
 
   /// Creates a new collection from the specified string.
   static member Parse(value: string): OrderHintCollection =
-    if value.Length > 0 then value.Split ',' else [||]
+    value.Split(',', StringSplitOptions.RemoveEmptyEntries ||| StringSplitOptions.TrimEntries)
     |> Array.map (fun token ->
-      let sortOrder = if token.StartsWith '-' then Descending else Ascending
-      let column = if sortOrder = Descending then token[1..] else token
+      let column = sortOrderPattern.Replace(token, "")
+      let sortOrder = if token.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase) then Descending else Ascending
       { Column = column; SortOrder = sortOrder })
     |> OrderHintCollection
 
@@ -72,5 +76,5 @@ type OrderHintCollection([<ParamArray>] orderHints: OrderHint array) =
   /// Returns a string representation of this object.
   override this.ToString() =
     this
-    |> Seq.map (fun orderHint -> $"""{if orderHint.SortOrder = Descending then "-" else ""}{orderHint.Column}""")
-    |> String.concat ","
+    |> Seq.map (fun orderHint -> $"""{orderHint.Column} {if orderHint.SortOrder = Descending then "DESC" else "ASC"}""")
+    |> String.concat ", "
