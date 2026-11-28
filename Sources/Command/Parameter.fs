@@ -44,11 +44,11 @@ type Parameter(name: string, ?value: objnull) =
     let parameter = command.CreateParameter()
     parameter.ParameterName <- this.Name
     parameter.Value <- this.Value
-    match this.DbType with None -> () | Some dbType -> parameter.DbType <- dbType
-    match this.Direction with None -> () | Some direction -> parameter.Direction <- direction
-    match this.Precision with None -> () | Some precision -> parameter.Precision <- precision
-    match this.Scale with None -> () | Some scale -> parameter.Scale <- scale
-    match this.Size with None -> () | Some size -> parameter.Size <- size
+    this.DbType |> Option.iter (fun dbType -> parameter.DbType <- dbType)
+    this.Direction |> Option.iter (fun direction -> parameter.Direction <- direction)
+    this.Precision |> Option.iter (fun precision -> parameter.Precision <- precision)
+    this.Scale |> Option.iter (fun scale -> parameter.Scale <- scale)
+    this.Size |> Option.iter (fun size -> parameter.Size <- size)
     parameter
 
   /// Normalizes the specified parameter name.

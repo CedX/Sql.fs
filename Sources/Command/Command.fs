@@ -26,7 +26,7 @@ type Command(?text: string) =
     command.CommandText <- this.Text
     command.CommandTimeout <- this.Timeout
     command.CommandType <- this.Type
-    match this.Transaction with None -> () | Some transaction -> command.Transaction <- transaction
+    this.Transaction |> Option.iter (fun transaction -> command.Transaction <- transaction)
     for parameter in defaultArg parameters (ParameterCollection()) do command.Parameters.Add(parameter.ToDbParameter command) |> ignore<int>
     command
 
